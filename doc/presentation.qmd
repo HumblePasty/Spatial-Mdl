@@ -1,0 +1,33 @@
+---
+title: "Final Project Presentation<br>Biostat 696"
+author: "Map Mad Scientists<br>Kunxi Li, Haolin Li, Jiayuan Xiao"
+format: 
+  revealjs: 
+    theme: [solarized, custom.sass]
+    footer: "Map Mad Scientists"
+editor: visual
+---
+
+## Data Source {.smaller}
+
+**Appalachian Play Fairway Analysis Seismic Hazards Supporting Data**([Link](https://data.world/us-doe-gov/e8fc308b-97df-460e-bdc6-cce8eb82e943))
+
+-   A dataset that focus on a set of earthquake events within the Appalachian area
+-   Standard information on the earthquake event
+    -   location (`latitude` and `longitude`, location name)
+    -   `magnitude`, `depth` and `time`
+-   Additional information
+    -   magnitude types
+    -   blast potential, `contributor` (data source)
+
+**Reference:** Cornell University. (2016). Appalachian Basin Play Fairway Analysis Thermal Risk Factor and Quality Analyses \[data set\]. Retrieved from https://dx.doi.org/10.15121/1495426.
+
+## Goals
+
+## Methods
+
+## Results
+
+::: {style="text-align:center;"}
+# Thank You!
+:::

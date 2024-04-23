@@ -3,10 +3,11 @@ library(gridExtra)
 library(reshape2)
 library(dplyr)
 library(tidyr)
+library(GGally)
 
 # work dir
 setwd("./data")
-
+# setwd("./BIOSTAT 696/Final")
 # load the data
 data = read.csv('GaN2023.csv')
 
@@ -64,57 +65,74 @@ sv_res_plot
 library(spBayes)
 
 
+
+
 X <- f_data %>%  select(Elevation) %>% as.matrix()
 
-Y <- f_data$SQMReading
+Y <- f_data$SQMReading %>% as.matrix()
+
+sample <- sample.int(length(Y), size=floor(.8*length(Y)),replace=FALSE)
+
+Y_train <- Y[sample,] %>% as.numeric()
+X_train <- X[sample,] 
+Y_test <- Y[-sample,] %>% as.numeric()
+X_test <- X[-sample,] %>% as.matrix()
+
 
 
 coords <- cbind(f_data$Latitude, f_data$Longitude)
 dup <- duplicated(coords)
 coords[dup] <- coords[dup] + runif(sum(dup), 0, 1e-2)
 
-n.samples <- 10000
+n.samples <- 20000
 
-starting <- list("phi"=10/0.5, "sigma.sq"=90, "tau.sq"=1)
-tuning <- list("phi"=0.01, "sigma.sq"=0.1, "tau.sq"=0.1)
+coords_train <- coords[sample,]
+coords_test <- coords[-sample,]
+
+starting <- list("phi"=15, "sigma.sq"=145, "tau.sq"=1)
+tuning <- list("phi"=0.03, "sigma.sq"=0.03, "tau.sq"=0.03)
 
 priors <- list("beta.Norm"=list(rep(0,ncol(X)), diag(1000,ncol(X))),
-               "phi.Unif"=c(10/1, 10/0.1), "sigma.sq.IG"=c(2, 2),
-               "tau.sq.IG"=c(2, 0.1))
+               "phi.Unif"=c(10/1, 10/0.1), "sigma.sq.IG"=c(2, 200),
+               "tau.sq.IG"=c(3, 300))
 
 cov.model <- "exponential"
 
 system.time({
-model_fit <- spLM(Y~X-1, coords=coords, starting=starting,
-                  tuning=tuning, priors=priors, cov.model=cov.model,
-                  n.samples=n.samples, verbose=FALSE, n.report=500)
+  model_fit <- spLM(Y_train~X_train-1, coords=coords_train, starting=starting,
+                    tuning=tuning, priors=priors, cov.model=cov.model,
+                    n.samples=n.samples, verbose=FALSE, n.report=500)
 })
 
 
+model_fit$acceptance
 
-
-dev.new()
+png(filename = "Theta_Trace.png", res=800, width=5000, height=3000)
 
 par(mfrow=c(2,2))
 
-ts.plot(model_fit$p.theta.samples[,1],main="sigmasq",ylab="", xlim=c(100,nrow(model_fit$p.theta.samples)),ylim=c(0,220))
+ts.plot(model_fit$p.theta.samples[,1],main="sigmasq",ylab="", xlim=c(40000,nrow(model_fit$p.theta.samples)),ylim=c(110,200))
 
-ts.plot(model_fit$p.theta.samples[,2],main="tausq",ylab="", xlim=c(100,nrow(model_fit$p.theta.samples)),ylim=c(0.2,1))
+ts.plot(model_fit$p.theta.samples[,2],main="tausq",ylab="", xlim=c(40000,nrow(model_fit$p.theta.samples)),ylim=c(1.5,2.8))
 
-ts.plot(model_fit$p.theta.samples[,3],main="phi",ylab="", xlim=c(50,nrow(model_fit$p.theta.samples)),ylim=c(10,11))
+ts.plot(model_fit$p.theta.samples[,3],main="phi",ylab="", xlim=c(40000,nrow(model_fit$p.theta.samples)),ylim=c(9.9,10.4))
 
+dev.off()
 
 library(gridExtra)
 burn.in<-0.75*n.samples
 model_recover<-spRecover(model_fit,start=burn.in)
 w_post <- model_recover$p.w.recover.samples
 b_post <- model_recover$p.beta.recover.samples
-XB_post <- X %*% t(b_post)
+XB_post <- X_train %*% t(b_post)
 XBW_mean <- (XB_post + w_post) %>% apply(1, mean)
-model_residual <- Y - XBW_mean
+model_residual <- Y_train - XBW_mean
 
-df <- j_data %>% mutate(residual = model_residual)
-residual_map <- ggplot(df, aes(lat, lnt, color=residual)) +
+
+
+png(filename = "Residual_Bayes.png" ,res=800, width=6000, height=3000)
+df <- f_data %>% mutate(residual = model_residual)
+residual_map <- ggplot(df, aes(Latitude, Longitude, color=residual)) +
   geom_point() + 
   scale_color_viridis_c() +
   theme_minimal() +
@@ -126,4 +144,33 @@ sv_df <- data.frame(dists = sv$u, variogram = sv$v, npairs = sv$n, sd = sv$sd)
 sv_plot <- ggplot(sv_df, aes(x=dists, y=variogram)) + geom_point(size=2, shape=8) +
   theme_minimal()
 
-grid.arrange(residual_map, sv_plot, nrow=1)
+m <-grid.arrange(residual_map, sv_plot, nrow=1)
+
+dev.off()
+
+
+
+
+#Predictions
+pred <- spPredict(model_recover, pred.covars = X_test, pred.coords = coords_test, start = 0.5* n.samples)
+
+y.hat <- apply(pred$p.y.predictive.samples, 1, mean)
+
+quant <- function(x){quantile(x, prob=c(0.025, 0.5, 0.975))}
+
+y.hat <- apply(pred$p.y.predictive.samples, 1, quant)
+
+plot(Y_test, y.hat[2,], pch=19, cex=0.5, xlab="observed y", ylab="predicted y")
+arrows(Y_test[-mod], y.hat[2,-mod], Y_test, y.hat[1,-mod], angle=90, length=0.05)
+arrows(Y_test[-mod], y.hat[2,-mod], Y_test, y.hat[3,-mod], angle=90, length=0.05)
+
+#Low rank GP
+
+system.time({
+  lrmodel_fit <- spLM(Y~X-1, coords=coords, starting=starting,
+                    tuning=tuning, priors=priors, cov.model=cov.model,
+                    n.samples=n.samples, verbose=FALSE, n.report=500,knots= c(6,6,0.1))
+})
+
+# Nearest Neighbor GP
+library(spNNGP)

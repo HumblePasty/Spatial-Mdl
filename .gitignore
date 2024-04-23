@@ -50,3 +50,6 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+data/**/*.tif
+data/**/*.ovr

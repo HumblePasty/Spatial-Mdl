@@ -60,6 +60,13 @@ sv_res_plot <- ggplot(sv_res_df, aes(x=dists, y=variogram)) +
 
 sv_res_plot
 
+
+ini.vals <- expand.grid(seq(0.1,1,l=5), seq(0.1,1,l=5))
+variofit <- geoR::variofit(sv_residual, ini=ini.vals, fix.nugget=TRUE, cov.model="exponential")
+
+plot(sv_residual)
+lines(variofit)
+
 # Bayes Model
 library(spBayes)
 
@@ -73,7 +80,9 @@ coords <- cbind(f_data$Latitude, f_data$Longitude)
 dup <- duplicated(coords)
 coords[dup] <- coords[dup] + runif(sum(dup), 0, 1e-2)
 
-n.samples <- 10000
+n.samples <- 1000
+
+X <- cbind(1, X)
 
 starting <- list("phi"=10/0.5, "sigma.sq"=90, "tau.sq"=1)
 tuning <- list("phi"=0.01, "sigma.sq"=0.1, "tau.sq"=0.1)
@@ -127,3 +136,10 @@ sv_plot <- ggplot(sv_df, aes(x=dists, y=variogram)) + geom_point(size=2, shape=8
   theme_minimal()
 
 grid.arrange(residual_map, sv_plot, nrow=1)
+
+
+#MCMC diagno
+
+#Predictions
+sample <- sample.int(nrow(Y), size=floor(.75*nrow(Y)),replace=FALSE)
+

@@ -4,10 +4,13 @@ library(reshape2)
 library(dplyr)
 library(tidyr)
 library(GGally)
+library(gridExtra)
+library(spBayes)
+library(coda)
 
 # work dir
 setwd("./data")
-# setwd("./BIOSTAT 696/Final")
+
 # load the data
 data = read.csv('GaN2023_full.csv')
 
@@ -16,9 +19,18 @@ data = read.csv('GaN2023_full.csv')
 data = data[!is.na(data$SQMReading),]
 f_data = data[data$SQMReading >= 16 & data$SQMReading <= 22,]
 
-# plot the locations of the data
-p1 = ggplot(f_data, aes(x = Longitude, y = Latitude)) +
+# plot the locations of the data, color by SQMReading, with leaflet basemap
+# library(leaflet)
+# m = leaflet(f_data) %>% 
+#   addTiles() %>% 
+#   addCircleMarkers(lng = ~Longitude, lat = ~Latitude, radius = 3, color = ~colorNumeric("viridis", domain = f_data$SQMReading)(SQMReading)) %>%
+#   addLegend("bottomright", pal = colorNumeric("viridis", domain = f_data$SQMReading), values = f_data$SQMReading, title = "MPSAS") %>%
+#   # minimal tiles
+#   setView(lng = -95, lat = 37, zoom = 4)
+# m
+p1 = ggplot(f_data, aes(x = Longitude, y = Latitude, color = SQMReading)) +
   geom_point() +
+
   labs(title = "Locations of the data")
 
 # crop the data within USA
@@ -40,7 +52,7 @@ sv2_plot <- ggplot(sv2_df, aes(x=dists, y=variogram)) +
 sv2_plot
 
 
-# Bayesian Modelling
+# Linear Model
 lm_model <- lm(SQMReading ~ Elevation + popden_km2 + elec_use -1 , data = f_data)
 summary(lm_model)
 var(lm_model$residuals)
@@ -69,17 +81,14 @@ lines(variofit)
 
 print(c(variofit$cov.pars[1],variofit$cov.pars[2]))
 
-# Bayes Model
-library(spBayes)
 
-
-
-
+# Exponential Model (full rank GP)
 X <- Ext_cp %>%  select(c(x1,x2,x3)) %>% as.matrix()
 X[,3] <- X[,3]/10000
 
 Y <- Ext_cp$y %>% as.matrix()
 
+# divide into sample and training datasets
 sample <- sample.int(length(Y), size=floor(.8*length(Y)),replace=FALSE)
 
 Y_train <- Y[sample,] %>% as.numeric()
@@ -98,9 +107,11 @@ n.samples <- 20000
 coords_train <- coords[sample,]
 coords_test <- coords[-sample,]
 
+# Model assumptions
 starting <- list("phi"=1/0.5, "sigma.sq"=70, "tau.sq"=1)
 tuning <- list("phi"=0.05, "sigma.sq"=0.05, "tau.sq"=0.05)
 
+# needs rework: beta should be centered
 priors <- list("beta.Norm"=list(rep(0,ncol(X_train)), diag(1000,ncol(X_train))),
                "phi.Unif"=c(1/1, 1/0.1), "sigma.sq.IG"=c(2, 2),
                "tau.sq.IG"=c(2, 0.1))
@@ -117,19 +128,15 @@ system.time({
 
 model_fit$acceptance
 
+# exporting MCMC Result
 png(filename = "Theta_Trace.png", res=800, width=5000, height=3000)
-
 par(mfrow=c(2,2))
-
 ts.plot(model_fit$p.theta.samples[,1],main="sigmasq",ylab="", xlim=c(15000,nrow(model_fit$p.theta.samples)),ylim=c(85,135))
-
 ts.plot(model_fit$p.theta.samples[,2],main="tausq",ylab="", xlim=c(15000,nrow(model_fit$p.theta.samples)),ylim=c(0.10,0.3))
-
 ts.plot(model_fit$p.theta.samples[,3],main="phi",ylab="", xlim=c(15000,nrow(model_fit$p.theta.samples)),ylim=c(1,1.05))
-
 dev.off()
 
-library(gridExtra)
+# recover the testing dataset
 burn.in<-0.75*n.samples
 model_recover<-spRecover(model_fit,start=burn.in)
 w_post <- model_recover$p.w.recover.samples
@@ -140,6 +147,7 @@ model_residual <- Y_train - XBW_mean
 
 train <- cbind(Y_train,X_train,coords_train) %>% as.data.frame()
 
+# plot the residuals
 png(filename = "Residual_Bayes.png" ,res=800, width=6000, height=3000)
 df <- train %>% mutate(residual = model_residual, Longitude = V6, Latitude = V5)
 residual_map <- ggplot(df, aes(Latitude, Longitude, color=residual)) +
@@ -199,19 +207,12 @@ outcoords <- as.matrix(pred_points)
 
 
 #MCMC diagnosis
-library(coda)
+
 mcmc <- as.mcmc(model_fit$p.theta.samples)
 
 model
 
 summary(mcmc)
-
-# Define different starting values for each chain
-starting_values <- list(
-  list("phi" = 1/0.5, "sigma.sq" = 70, "tau.sq" = 1),   # Original starting values
-  list("phi" = 1/0.3, "sigma.sq" = 100, "tau.sq" = 2),  # Modified starting values for second chain
-  list("phi" = 1/0.7, "sigma.sq" = 50, "tau.sq" = 0.5)  # Modified starting values for third chain
-)
 
 # Define different starting values for each chain
 starting_values <- list(

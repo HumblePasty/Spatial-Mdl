@@ -18,25 +18,28 @@ editor: visual
 
 ## Motivation: Continue {.smaller}
 
--   Magnitude of object brightness
+-   **Magnitude of object brightness**
 
-    -   Range -26.73 - +30
-    -   Sun -26.73, full moon -12.6, faintest stars observable with naked eye +6
+    -   Range $[-26.73, 30]$
+    -   Sun -26.73; full moon -12.6; faintest stars observable with naked eye +6
 
--   Naked Eye Limiting Magnitude (NELM)
+-   **Naked Eye Limiting Magnitude (`NELM`)**
 
--   Magnitude Per Square Arcsecond (MPSAS) $$
+-   **Magnitude Per Square Arcsecond (`MPSAS`)**
+    $$
     NELM = \text{some complex function}(MPSAS)
     $$
-    -   Range 16 (darkest) - 22 (brightest)
-    -   Measured by equipment
+    
+    -   Range $[16 (darkest) - 22 (brightest)]$
+    -   Measured by equipment (Sky Quality Meter)
 
 ## Data Source (Main) {.smaller}
 
-**Globe at Night Project**([Link](https://globeatnight.org/maps-data/))
+**Globe at Night Project** ([Link](https://globeatnight.org/maps-data/))
 
--   Light pollution report on 29404 observations (2020)
--   Sky brightness measurement (MPSAS) on 2030 locations
+-   Light pollution report at 29404 locations (2020)
+-   Sky brightness measurement (`MPSAS`) at 2030 locations
+-   Darker means higher `NELM`
 
 ::: {style="text-align:center;"}
 
@@ -44,7 +47,9 @@ editor: visual
 
 :::
 
-## Data Source (Explanatory Variables) {.smaller}
+
+
+## Explanatory Variables {.smaller}
 
 -   **Population Density**: Gridded Population of the World[^1]
 -   **Land Price**: Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States[^2]
@@ -62,10 +67,14 @@ editor: visual
 
 ## Our Model {.smaller}
 
-**Response Variable**: MPSAS at location $S$
 $$
-y(s)
+y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
 $$
+
+**Response Variable**: 
+
+- $y(s)$: MPSAS at location $S$ (Univariate)
+
 **Explanatory Variables**
 $$
 x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
@@ -76,32 +85,103 @@ $$
 - $x_3$: Land Price
 - $x_4$: Electricity Consumption
 
-**Spatial Regression Model** $$
-y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
-$$
+## Model Assumptions - GP {.smaller}
 
-## Model Assumptions
+:::: {.columns}
 
--   Using what kernel for GP
--   The range and type of distribution for each parameter
--   \[TBD\]
+::: {.column width="50%"}
+
+- $w(s) \sim GP(0, \tau^2C(\cdot,\cdot))$
+
+- Features
+
+  - Rapid decay in covariance
+
+  - Stationary, isotropic
+
+- Exponential kernel
+  $$
+  C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
+  $$
+
+  - For simplicity
+  - Interpretation of $\phi$
+
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png)
+
+::: {style="text-align:center;"}
+
+Nighttime Light Image Captured in NASA Worldview[^4]
+
+:::
+
+:::
+
+::::
 
 ## Summary of Priors
 
--   \[TBD\]
+-   $\beta \sim N(0, 1000I_p)$
+    -   We assume independent vatiable
+
+-   $\phi \sim U(1, 10)$
+    -   We assume large decay factor
+
+-   $\sigma^2 \sim Inv.G(2, 2)$
+    -   Chose because a webpage method
+
+-   $\tau^2 \sim Inv.G(2, 0.1)$
+    -   Chose because a webpage method
+
 
 ## Results - MCMC
 
-\[TBD\]
+
+
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/Theta_Trace.png" style="zoom: 33%;" />
+
+:::
+
+## Results - Prediction on the Testing Dataset
+
+- 20% of the data
+- Good prediction result
+
+::: {style="text-align:center;"}
+
+![](./presentation.assets/PredictvsTest_Bayes.png)
+
+:::
+
+## Results - Residuals
+
+- Bullet points
+
+::: {style="text-align:center;"}
+
+![](./presentation.assets/Residual_Bayes.png)
+
+:::
 
 ## Results - Light Pollution in Ann Arbor
 
-[TBD]
+
 
 ## Discussion on Improvements
 
 -   Scale too large
+-   Cloud cover issues
+-   static, not temporal
 
 ::: {style="text-align:center;"}
 # Thank You!
 :::
+
+[^4]: Román, M. O., Wang, Z., Sun, Q., Kalb, V., Miller, S. D., Molthan, A., … & Masuoka, E. J. (2018). NASA's Black Marble nighttime lights product suite. Remote Sensing of Environment, 210, 113-143, [doi:10.1016/j.rse.2018.03.017](https://doi.org/10.1016/j.rse.2018.03.017).

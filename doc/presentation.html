@@ -346,34 +346,35 @@ Map Mad Scientists<br>Kunxi Li, Haolin Li, Jiayuan Xiao
 <section id="motivation-continue" class="slide level2 smaller">
 <h2>Motivation: Continue</h2>
 <ul>
-<li><p>Magnitude of object brightness</p>
+<li><p><strong>Magnitude of object brightness</strong></p>
 <ul>
-<li>Range -26.73 - +30</li>
-<li>Sun -26.73, full moon -12.6, faintest stars observable with naked eye +6</li>
+<li>Range <span class="math inline">\([-26.73, 30]\)</span></li>
+<li>Sun -26.73; full moon -12.6; faintest stars observable with naked eye +6</li>
 </ul></li>
-<li><p>Naked Eye Limiting Magnitude (NELM)</p></li>
-<li><p>Magnitude Per Square Arcsecond (MPSAS) <span class="math display">\[
+<li><p><strong>Naked Eye Limiting Magnitude (<code>NELM</code>)</strong></p></li>
+<li><p><strong>Magnitude Per Square Arcsecond (<code>MPSAS</code>)</strong> <span class="math display">\[
 NELM = \text{some complex function}(MPSAS)
 \]</span></p>
 <ul>
-<li>Range 16 (darkest) - 22 (brightest)</li>
-<li>Measured by equipment</li>
+<li>Range <span class="math inline">\([16 (darkest) - 22 (brightest)]\)</span></li>
+<li>Measured by equipment (Sky Quality Meter)</li>
 </ul></li>
 </ul>
 </section>
 <section id="data-source-main" class="slide level2 smaller">
 <h2>Data Source (Main)</h2>
-<p><strong>Globe at Night Project</strong>(<a href="https://globeatnight.org/maps-data/">Link</a>)</p>
+<p><strong>Globe at Night Project</strong> (<a href="https://globeatnight.org/maps-data/">Link</a>)</p>
 <ul>
-<li>Light pollution report on 29404 observations (2020)</li>
-<li>Sky brightness measurement (MPSAS) on 2030 locations</li>
+<li>Light pollution report at 29404 locations (2020)</li>
+<li>Sky brightness measurement (<code>MPSAS</code>) at 2030 locations</li>
+<li>Darker means higher <code>NELM</code></li>
 </ul>
 <div style="text-align:center;">
 <p><img src="./presentation.assets/2023-map.original.png" style="zoom: 50%;"></p>
 </div>
 </section>
-<section id="data-source-explanatory-variables" class="slide level2 smaller">
-<h2>Data Source (Explanatory Variables)</h2>
+<section id="explanatory-variables" class="slide level2 smaller">
+<h2>Explanatory Variables</h2>
 <ul>
 <li><strong>Population Density</strong>: Gridded Population of the World<sup>1</sup></li>
 <li><strong>Land Price</strong>: Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States<sup>2</sup></li>
@@ -390,9 +391,14 @@ NELM = \text{some complex function}(MPSAS)
 </section>
 <section id="our-model" class="slide level2 smaller">
 <h2>Our Model</h2>
-<p><strong>Response Variable</strong>: MPSAS at location <span class="math inline">\(S\)</span> <span class="math display">\[
-y(s)
-\]</span> <strong>Explanatory Variables</strong> <span class="math display">\[
+<p><span class="math display">\[
+y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
+\]</span></p>
+<p><strong>Response Variable</strong>:</p>
+<ul>
+<li><span class="math inline">\(y(s)\)</span>: MPSAS at location <span class="math inline">\(S\)</span> (Univariate)</li>
+</ul>
+<p><strong>Explanatory Variables</strong> <span class="math display">\[
 x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
 \]</span></p>
 <ul>
@@ -401,22 +407,41 @@ x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
 <li><span class="math inline">\(x_3\)</span>: Land Price</li>
 <li><span class="math inline">\(x_4\)</span>: Electricity Consumption</li>
 </ul>
-<p><strong>Spatial Regression Model</strong> <span class="math display">\[
-y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
-\]</span></p>
 </section>
-<section id="model-assumptions" class="slide level2">
-<h2>Model Assumptions</h2>
+<section id="model-assumptions---gp" class="slide level2 smaller">
+<h2>Model Assumptions - GP</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <ul>
-<li>Using what kernel for GP</li>
-<li>The range and type of distribution for each parameter</li>
-<li>[TBD]</li>
+<li><p><span class="math inline">\(w(s) \sim GP(0, \tau^2C(\cdot,\cdot))\)</span></p></li>
+<li><p>Features</p>
+<ul>
+<li><p>Rapid decay in covariance</p></li>
+<li><p>Stationary, isotropic</p></li>
+</ul></li>
+<li><p>Exponential kernel <span class="math display">\[
+C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
+\]</span></p>
+<ul>
+<li>For simplicity</li>
+<li>Interpretation of <span class="math inline">\(\phi\)</span></li>
+</ul></li>
 </ul>
-</section>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png"></p>
+<div style="text-align:center;">
+<p>Nighttime Light Image Captured in NASA Worldview<sup>1</sup></p>
+</div>
+</div>
+</div>
+<aside><ol class="aside-footnotes"><li id="fn4"><p>Román, M. O., Wang, Z., Sun, Q., Kalb, V., Miller, S. D., Molthan, A., … &amp; Masuoka, E. J. (2018). NASA’s Black Marble nighttime lights product suite. Remote Sensing of Environment, 210, 113-143, <a href="https://doi.org/10.1016/j.rse.2018.03.017">doi:10.1016/j.rse.2018.03.017</a>.</p></li></ol></aside></section>
 <section id="summary-of-priors" class="slide level2">
 <h2>Summary of Priors</h2>
 <ul>
-<li>[TBD]</li>
+<li><span class="math inline">\(\beta \sim N(0, 1000I_p)\)</span></li>
+<li><span class="math inline">\(\phi \sim U(1, 10)\)</span></li>
+<li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 2)\)</span></li>
+<li><span class="math inline">\(\tau^2 \sim Inv.G(2, 0.1)\)</span></li>
 </ul>
 </section>
 <section id="results---mcmc" class="slide level2">
@@ -431,6 +456,7 @@ y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
 <h2>Discussion on Improvements</h2>
 <ul>
 <li>Scale too large</li>
+<li>Cloud cover issues</li>
 </ul>
 </section>
 <section id="thank-you" class="title-slide slide level1 center" style="text-align:center;">

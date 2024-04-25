@@ -262,7 +262,7 @@ tr <- stanc(file = filename, model_name = "BMNUS")
 BMNUS_sm <- stan_model(stanc_ret = tr, verbose=FALSE)
 
 nFolds <- 10
-nCpuCores <- 5
+nCpuCores <- 3
 
 # Construct the class for the cross validation test.
 # These computations require a long time.

@@ -396,7 +396,7 @@ y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
 \]</span></p>
 <p><strong>Response Variable</strong>:</p>
 <ul>
-<li><span class="math inline">\(y(s)\)</span>: MPSAS at location <span class="math inline">\(S\)</span> (Univariate)</li>
+<li><span class="math inline">\(y(s)\)</span>: <code>MPSAS</code> at location <span class="math inline">\(S\)</span> (Univariate)</li>
 </ul>
 <p><strong>Explanatory Variables</strong> <span class="math display">\[
 x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
@@ -417,46 +417,153 @@ x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
 <li><p>Features</p>
 <ul>
 <li><p>Rapid decay in covariance</p></li>
-<li><p>Stationary, isotropic</p></li>
+<li><p>Stationary, isotropic (?)</p></li>
 </ul></li>
 <li><p>Exponential kernel <span class="math display">\[
 C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 \]</span></p>
 <ul>
 <li>For simplicity</li>
-<li>Interpretation of <span class="math inline">\(\phi\)</span></li>
+<li>Interpretability</li>
 </ul></li>
 </ul>
 </div><div class="column" style="width:50%;">
-<p><img data-src="./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png"></p>
 <div style="text-align:center;">
-<p>Nighttime Light Image Captured in NASA Worldview<sup>1</sup></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png"></p>
+<figcaption>Nighttime Light Image Captured in NASA Worldview<sup>1</sup></figcaption>
+</figure>
+</div>
+</div>
+<div style="font-size:0.8em;">
+<p><em>Why not use night time light data as explanatory?</em></p>
+<ul>
+<li>Means the same thing as light pollution</li>
+<li>Actual meaning of the model</li>
+</ul>
 </div>
 </div>
 </div>
 <aside><ol class="aside-footnotes"><li id="fn4"><p>Román, M. O., Wang, Z., Sun, Q., Kalb, V., Miller, S. D., Molthan, A., … &amp; Masuoka, E. J. (2018). NASA’s Black Marble nighttime lights product suite. Remote Sensing of Environment, 210, 113-143, <a href="https://doi.org/10.1016/j.rse.2018.03.017">doi:10.1016/j.rse.2018.03.017</a>.</p></li></ol></aside></section>
-<section id="summary-of-priors" class="slide level2">
-<h2>Summary of Priors</h2>
+<section id="model-assumptions---priors" class="slide level2 smaller">
+<h2>Model Assumptions - Priors</h2>
 <ul>
-<li><span class="math inline">\(\beta \sim N(0, 1000I_p)\)</span></li>
-<li><span class="math inline">\(\phi \sim U(1, 10)\)</span></li>
-<li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 2)\)</span></li>
-<li><span class="math inline">\(\tau^2 \sim Inv.G(2, 0.1)\)</span></li>
+<li><span class="math inline">\(\beta \sim N(0, 1000I_p)\)</span>
+<ul>
+<li>We assume independence between explanatory variables</li>
+</ul></li>
+<li><span class="math inline">\(\phi \sim U(1, 10)\)</span>
+<ul>
+<li>We assume large decay factor</li>
+</ul></li>
+<li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 2)\)</span>
+<ul>
+<li>Chose because a webpage method</li>
+</ul></li>
+<li><span class="math inline">\(\tau^2 \sim Inv.G(2, 0.1)\)</span>
+<ul>
+<li>Chose because a webpage method</li>
+</ul></li>
 </ul>
 </section>
-<section id="results---mcmc" class="slide level2">
-<h2>Results - MCMC</h2>
-<p>[TBD]</p>
+<section id="results---mcmc-trace" class="slide level2 smaller">
+<h2>Results - MCMC Trace</h2>
+<div class="columns">
+<div class="column" style="width:33%;">
+<p><img data-src="./presentation.assets/Theta_Trace_sigma_Bayes.png"></p>
+</div><div class="column" style="width:33%;">
+<p><img data-src="./presentation.assets/Theta_Trace_tau_Bayes.png"></p>
+</div><div class="column" style="width:33%;">
+<p><img data-src="./presentation.assets/Theta_Trace_phi_Bayes-1714001656182-17.png"></p>
+</div>
+</div>
 </section>
-<section id="results---light-pollution-in-ann-arbor" class="slide level2">
-<h2>Results - Light Pollution in Ann Arbor</h2>
-<p>[TBD]</p>
+<section id="results---mcmc-diagnose" class="slide level2 smaller">
+<h2>Results - MCMC Diagnose</h2>
+<p><strong>Final values</strong>:</p>
+<ul>
+<li><span class="math inline">\(\beta = [a,b,c]^T, \sigma^2 = a, \tau^2 = a, \phi = a\)</span></li>
+</ul>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 8%;"></p>
+</div>
+</section>
+<section id="results---validation" class="slide level2">
+<h2>Results - Validation</h2>
+<ul>
+<li>Testing set: 25% of the data</li>
+</ul>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png" style="zoom: 15%;"></p>
+</div>
+</section>
+<section id="results---residuals" class="slide level2">
+<h2>Results - Residuals</h2>
+<div style="text-align:center;">
+<p><img data-src="./presentation.assets/Residual_Bayes-1714000947505-11.png"></p>
+</div>
+</section>
+<section id="result---compare-with-linear-model" class="slide level2">
+<h2>Result - Compare with Linear Model</h2>
+<div style="text-align:center;">
+<p><img data-src="./presentation.assets/Compare_LM_Bayes.png"></p>
+</div>
+</section>
+<section id="low-rank-gp" class="slide level2 smaller">
+<h2>Low Rank GP</h2>
+<ul>
+<li>Same priors, starting values, tuning values</li>
+<li>Same kernel (exponential)</li>
+<li>Knot size $ = $</li>
+<li>Computing time: <span class="math inline">\(\%\)</span> in reduction (from …)</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/PredictvsTest_LRBayes.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/Low%20Rank%20Residual_Bayes.png"></p>
+</div>
+</div>
+</section>
+<section id="nearest-neighbour-gp" class="slide level2 smaller">
+<h2>Nearest Neighbour GP</h2>
+<ul>
+<li>Same priors, starting values, tuning values</li>
+<li>Same kernel (exponential)</li>
+<li>Neighbour size:</li>
+<li>Computing time: <span class="math inline">\(\%\)</span> in reduction</li>
+<li>Almost as good as full rank GP</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/PredictvsTest_NNBayes(Response).png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/NN_Residual_Bayes(Response)-1714010822869-26.png"></p>
+</div>
+</div>
+</section>
+<section id="prediction---interpolating-the-damaged-values" class="slide level2">
+<h2>Prediction - Interpolating the damaged values</h2>
+<ul>
+<li>With full rank GP model</li>
+</ul>
+</section>
+<section id="prediction---light-pollution-in-ann-arbor" class="slide level2">
+<h2>Prediction - Light Pollution in Ann Arbor</h2>
+<ul>
+<li>With full rank GP model</li>
+</ul>
+</section>
+<section id="attempts-non-stationary-model" class="slide level2">
+<h2>Attempts: Non-stationary Model</h2>
 </section>
 <section id="discussion-on-improvements" class="slide level2">
 <h2>Discussion on Improvements</h2>
 <ul>
 <li>Scale too large</li>
 <li>Cloud cover issues</li>
+<li>static, not temporal</li>
 </ul>
 </section>
 <section id="thank-you" class="title-slide slide level1 center" style="text-align:center;">

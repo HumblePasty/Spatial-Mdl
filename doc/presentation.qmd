@@ -73,14 +73,14 @@ $$
 
 **Response Variable**: 
 
-- $y(s)$: MPSAS at location $S$ (Univariate)
+- $y(s)$: `MPSAS` at location $S$ (Univariate)
 
 **Explanatory Variables**
 $$
 x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
 $$
 
-- $x_1$: Elevation 
+- $x_1$: Elevation
 - $x_2$: Population Density
 - $x_3$: Land Price
 - $x_4$: Electricity Consumption
@@ -97,7 +97,7 @@ $$
 
   - Rapid decay in covariance
 
-  - Stationary, isotropic
+  - Stationary, isotropic (?)
 
 - Exponential kernel
   $$
@@ -105,18 +105,25 @@ $$
   $$
 
   - For simplicity
-  - Interpretation of $\phi$
+  - Interpretability
 
 
 :::
 
 ::: {.column width="50%"}
 
-![](./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png)
-
 ::: {style="text-align:center;"}
 
-Nighttime Light Image Captured in NASA Worldview[^4]
+![Nighttime Light Image Captured in NASA Worldview[^4]](./presentation.assets/snapshot-2021-05-03T00_00_00Z-1713928280926-2.png)
+
+:::
+
+::: {style="font-size:0.8em;"}
+
+*Why not use night time light data as explanatory?*
+
+- Means the same thing as light pollution
+- Actual meaning of the model
 
 :::
 
@@ -124,10 +131,10 @@ Nighttime Light Image Captured in NASA Worldview[^4]
 
 ::::
 
-## Summary of Priors
+## Model Assumptions - Priors {.smaller}
 
 -   $\beta \sim N(0, 1000I_p)$
-    -   We assume independent vatiable
+    -   We assume independence between explanatory variables
 
 -   $\phi \sim U(1, 10)$
     -   We assume large decay factor
@@ -139,38 +146,132 @@ Nighttime Light Image Captured in NASA Worldview[^4]
     -   Chose because a webpage method
 
 
-## Results - MCMC
+## Results - MCMC Trace {.smaller}
 
+:::: {.columns}
 
+::: {.column width="33%"}
 
-::: {style="text-align:center;"}
-
-<img src="./presentation.assets/Theta_Trace.png" style="zoom: 33%;" />
+![](./presentation.assets/Theta_Trace_sigma_Bayes.png)
 
 :::
 
-## Results - Prediction on the Testing Dataset
+::: {.column width="33%"}
 
-- 20% of the data
-- Good prediction result
+![](./presentation.assets/Theta_Trace_tau_Bayes.png)
+
+:::
+
+::: {.column width="33%"}
+
+![](./presentation.assets/Theta_Trace_phi_Bayes-1714001656182-17.png)
+
+:::
+
+::::
+
+## Results - MCMC Diagnose {.smaller}
+
+**Final values**:
+
+- $\beta = [a,b,c]^T, \sigma^2 = a, \tau^2 = a, \phi = a$
 
 ::: {style="text-align:center;"}
 
-![](./presentation.assets/PredictvsTest_Bayes.png)
+<img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 8%;" />
+
+:::
+
+## Results - Validation
+
+- Testing set: 25% of the data
+
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png" style="zoom: 15%;" />
 
 :::
 
 ## Results - Residuals
 
-- Bullet points
-
 ::: {style="text-align:center;"}
 
-![](./presentation.assets/Residual_Bayes.png)
+![](./presentation.assets/Residual_Bayes-1714000947505-11.png)
 
 :::
 
-## Results - Light Pollution in Ann Arbor
+## Result - Compare with Linear Model
+
+::: {style="text-align:center;"}
+
+![](./presentation.assets/Compare_LM_Bayes.png)
+
+:::
+
+## Low Rank GP {.smaller}
+
+- Same priors, starting values, tuning values
+- Same kernel (exponential)
+- Knot size $\mathcal{K} = $
+- Computing time: $\%$ in reduction (from …)
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/PredictvsTest_LRBayes.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/Low Rank Residual_Bayes.png)
+
+:::
+
+::::
+
+
+
+## Nearest Neighbour GP {.smaller}
+
+- Same priors, starting values, tuning values
+- Same kernel (exponential)
+- Neighbour size: 10
+- Computing time: $\%$ in reduction
+- Almost as good as full rank GP
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/PredictvsTest_NNBayes(Response).png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/NN_Residual_Bayes(Response)-1714010822869-26.png)
+
+:::
+
+::::
+
+
+
+## Prediction - Interpolating the damaged values
+
+- With full rank GP model
+
+
+
+## Prediction - Light Pollution in Ann Arbor
+
+- With full rank GP model
+
+
+
+## Attempts: Non-stationary Model
 
 
 
@@ -179,6 +280,8 @@ Nighttime Light Image Captured in NASA Worldview[^4]
 -   Scale too large
 -   Cloud cover issues
 -   static, not temporal
+
+
 
 ::: {style="text-align:center;"}
 # Thank You!

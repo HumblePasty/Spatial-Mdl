@@ -1,0 +1,15 @@
+Inference for Stan model: BMNUS.
+3 chains, each with iter=2000; warmup=500; thin=1; 
+post-warmup draws per chain=1500, total post-warmup draws=4500.
+
+        mean se_mean    sd  2.5%   25%   50%   75%  97.5% n_eff  Rhat
+tau1   1.155   0.045 0.652 0.447 0.741 1.001 1.372  2.759   212 1.010
+alpha1 0.656   0.009 0.170 0.264 0.548 0.685 0.789  0.904   380 1.004
+tau2   6.770   0.522 4.410 1.462 3.555 5.641 8.906 18.267    71 1.075
+alpha2 0.652   0.010 0.211 0.191 0.504 0.683 0.825  0.954   491 1.002
+rho    0.046   0.001 0.037 0.002 0.017 0.037 0.066  0.139  3081 1.000
+
+Samples were drawn using NUTS(diag_e) at Thu Apr 25 01:45:11 2024.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).

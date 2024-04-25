@@ -7,6 +7,8 @@ library(GGally)
 library(gridExtra)
 library(spBayes)
 library(coda)
+library(sf)
+library(spData)
 
 # work dir
 setwd("./data")
@@ -18,6 +20,88 @@ data = read.csv('GaN2023_full.csv')
 # drop NA values
 data = data[!is.na(data$SQMReading),]
 f_data = data[data$SQMReading >= 16 & data$SQMReading <= 22,]
+
+# select all points that is within Michigan
+Michigan_boundary = ggplot2::map_data("state") %>% filter(region == "michigan") %>% st_as_sf(coords = c("long", "lat"), crs = 4326)
+Michigan_boundary = Michigan_boundary %>% st_bbox()
+# select points that are within the rectangle of Michigan
+f_data = data[data$Longitude >= Michigan_boundary[1] & data$Longitude <= Michigan_boundary[3] & data$Latitude >= Michigan_boundary[2] & data$Latitude <= Michigan_boundary[4],]
+# select point that do not yet have SQMReading but have all other three variables
+f_data_na = f_data[is.na(f_data$SQMReading),]
+f_data_na = f_data_na[!is.na(f_data_na$popden_km2),]
+f_data_na = f_data_na[!is.na(f_data_na$Elevation),]
+f_data_na = f_data_na[!is.na(f_data_na$elec_use),]
+f_data_na = f_data_na[!is.na(f_data_na$landvalue_dollar_ha),]
+# export f_data_na
+write.csv(f_data_na, "f_data_na.csv")
+
+f_data_na = read.csv("f_data_na.csv")
+# select points that is within Michigan polygon
+f_data_na = f_data_na %>% st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+Michigan_polygon = spData::us_states %>% filter(NAME == "Michigan") %>% st_as_sf() %>% st_transform(4326)
+f_data_na = st_intersection(f_data_na, Michigan_polygon)
+f_data_na$Longitude = st_coordinates(f_data_na)[,1]
+f_data_na$Latitude = st_coordinates(f_data_na)[,2]
+# plot the locations of the data
+Michigan_boundary = ggplot2::map_data("state") %>% filter(region == "michigan")
+# plot the locations of the data, color by SQMReading
+p1 = ggplot(f_data_na, aes(x = Longitude, y = Latitude)) +
+  # add Michigan boundary
+  geom_path(ggplot2::aes(x = long, y = lat, group = group),
+            data = Michigan_boundary,
+            colour = "gray70") +
+  geom_point(aes(color = SQMReading)) +
+  # add legend
+  scale_color_viridis_c() +
+  labs(title = "Points with Missing MPSAS Measurements")
+p1
+
+pred_df = read.csv("NNGP_pred.csv") %>% st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+pred_df.full = read.csv("fullGP_pred.csv") %>% st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+pred_df.lr = read.csv("LRGP_pred.csv") %>% st_as_sf(coords = c("Longitude", "Latitude"), crs = 4326)
+Michigan_polygon = spData::us_states %>% filter(NAME == "Michigan") %>% st_as_sf() %>% st_transform(4326)
+pred_df = st_intersection(pred_df, Michigan_polygon)
+pred_df.full = st_intersection(pred_df.full, Michigan_polygon)
+pred_df.lr = st_intersection(pred_df.lr, Michigan_polygon)
+pred_df$Longitude = st_coordinates(pred_df)[,1]
+pred_df$Latitude = st_coordinates(pred_df)[,2]
+pred_df.full$Longitude = st_coordinates(pred_df.full)[,1]
+pred_df.full$Latitude = st_coordinates(pred_df.full)[,2]
+pred_df.lr$Longitude = st_coordinates(pred_df.lr)[,1]
+pred_df.lr$Latitude = st_coordinates(pred_df.lr)[,2]
+# plot the locations of the data
+Michigan_boundary = ggplot2::map_data("state") %>% filter(region == "michigan")
+# plot the locations of the data, color by SQMReading
+SQM_range <- range(c(pred_df$SQM,pred_df.full$SQM,pred_df.lr$SQM),na.rm = TRUE)
+p1 = ggplot(pred_df, aes(x = Longitude, y = Latitude, col= SQM)) +
+  # add Michigan boundary
+  geom_path(ggplot2::aes(x = long, y = lat, group = group),
+            data = Michigan_boundary,
+            colour = "gray70") +
+  labs(title = "Prediction fullGP")+
+  geom_point(aes(color = SQM)) +
+  scale_color_gradientn(colors = c("blue", "green", "yellow", "red"), limits = SQM_range)
+p2 = ggplot(pred_df.lr, aes(x = Longitude, y = Latitude, col= SQM)) +
+  # add Michigan boundary
+  geom_path(ggplot2::aes(x = long, y = lat, group = group),
+            data = Michigan_boundary,
+            colour = "gray70") +
+  labs(title = "Prediction LRGP")+
+  geom_point(aes(color = SQM)) +
+  scale_color_gradientn(colors = c("blue", "green", "yellow", "red"), limits = SQM_range)
+p3 = ggplot(pred_df, aes(x = Longitude, y = Latitude, col= SQM)) +
+  # add Michigan boundary
+  geom_path(ggplot2::aes(x = long, y = lat, group = group),
+            data = Michigan_boundary,
+            colour = "gray70") +
+  labs(title = "Prediction NNGP")+
+  geom_point(aes(color = SQM)) +
+  scale_color_gradientn(colors = c("blue", "green", "yellow", "red"), limits = SQM_range)
+png(filename = "Prediction_Extra.png" ,res=800, width=12000, height=4000)
+library(ggplot2)
+library(egg)
+grid.arrange(p1,p2,p3,nrow=1)
+dev.off()
 
 # plot the locations of the data, color by SQMReading, with leaflet basemap
 # library(leaflet)

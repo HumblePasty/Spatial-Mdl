@@ -13,15 +13,24 @@ editor: visual
 ::: {style="text-align:center;"}
 **Light Pollution**
 
-<img src="./presentation.assets/35732ace7b56363ff57b7f79f401ecb.jpg" alt="35732ace7b56363ff57b7f79f401ecb" style="zoom: 40%;"/>
+<img src="./presentation.assets/35732ace7b56363ff57b7f79f401ecb.jpg" alt="I took this in Kunming, Yunnan, " style="zoom: 33%;" />
+
+::: {style="font-size:0.6em;"}
+
+Winter night in Kunming, Yunan, China, Jan 16, 2023
+
 :::
 
-## Motivation: Continue {.smaller}
+:::
 
--   **Magnitude of object brightness**
+## Motivation {.smaller}
+
+-   **Magnitude of Celestial Body**
 
     -   Range $[-26.73, 30]$
-    -   Sun -26.73; full moon -12.6; faintest stars observable with naked eye +6
+    -   Sun -26.73
+    -   Full moon -12.6
+    -   Faintest stars observable with naked eye +6
 
 -   **Naked Eye Limiting Magnitude (`NELM`)**
 
@@ -30,50 +39,78 @@ editor: visual
     NELM = \text{some complex function}(MPSAS)
     $$
     
-    -   Range $[16 (darkest) - 22 (brightest)]$
+    -   Range $[16 (brightest) - 22 (darkest)]$
     -   Measured by equipment (Sky Quality Meter)
 
-## Data Source (Main) {.smaller}
+## Data Source
+
+:::: {.columns}
+
+::: {.column width="35%"}
+
+::: {style="font-size:0.7em;"}
 
 **Globe at Night Project** ([Link](https://globeatnight.org/maps-data/))
 
--   Light pollution report at 29404 locations (2020)
--   Sky brightness measurement (`MPSAS`) at 2030 locations
--   Darker means higher `NELM`
+-   Light pollution report at `29404` locations (2020)
+-   Sky brightness measurement (`MPSAS`) at `2030` locations
+    -   Around `800` inside continental US
 
-::: {style="text-align:center;"}
-
-<img src="./presentation.assets/2023-map.original.png" style="zoom: 50%;" />
+-   Darker means higher `NELM` (less light pollution)
 
 :::
 
+:::
 
+::: {.column width="65%"}
 
-## Explanatory Variables {.smaller}
+::: {style="text-align:center;"}
 
--   **Population Density**: Gridded Population of the World[^1]
--   **Land Price**: Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States[^2]
--   **Electricity Consumption**: Global 1 km × 1 km gridded revised real gross domestic product and electricity consumption during 1992-2019 based on calibrated nighttime light data[^3]
+![`NELM` at All Report Locations in 2020](./presentation.assets/2023-map.original.png)
+
+:::
+
+:::
+
+::::
+
+## Data Source {.smaller}
+
+**Explanatory Variables**
+
+-   **Population Density[^1]**
+-   **Land Price[^2]**
+-   **Electricity Consumption[^3]**
+
+All are raster datasets and are sampled at the same locations as `MPSAS` measurements.
 
 [^1]: Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4): Population Density Adjusted to Match 2015 Revision UN WPP Country Totals, Revision 11. Palisades, New York: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 22 04 2024.
 [^2]: Nolte, Christoph (2020). Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States \[Dataset\]. Dryad. https://doi.org/10.5061/dryad.np5hqbzq9
 [^3]: Chen, Jiandong; Gao, Ming (2021). Global 1 km × 1 km gridded revised real gross domestic product and electricity consumption during 1992-2019 based on calibrated nighttime light data. figshare. Dataset. https://doi.org/10.6084/m9.figshare.17004523.v1
 
-## Goal
+## Our Goal
 
--   Impute missing or damaged data in the original dataset (due to unofficial reports)
--   Predict light pollution in Ann Arbor Area and interpret in NELM
--   Discuss the impact of population density, land price and electricity consumption on the light pollution
+::: {style="font-size:0.9em;"}
+
+-   Apply different spatial Bayesian models and compare performance;
+-   Impute missing or damaged data in the original dataset (due to unofficial reports);
+-   Predict light pollution in Michigan.
+
+:::
 
 ## Our Model {.smaller}
 
+::: {style="font-size:0.9em;"}
 $$
 y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
 $$
 
 **Response Variable**: 
+$$
+y(s)
+$$
 
-- $y(s)$: `MPSAS` at location $S$ (Univariate)
+- `MPSAS` measurement at location $s$ (Univariate)
 
 **Explanatory Variables**
 $$
@@ -84,6 +121,8 @@ $$
 - $x_2$: Population Density
 - $x_3$: Land Price
 - $x_4$: Electricity Consumption
+
+:::
 
 ## Model Assumptions - GP {.smaller}
 
@@ -120,10 +159,10 @@ $$
 
 ::: {style="font-size:0.8em;"}
 
-*Why not use night time light data as explanatory?*
+*Why not use night time light data as an explanatory variable?*
 
-- Means the same thing as light pollution
-- Actual meaning of the model
+- Only measuring differences
+- Does not explain anything
 
 :::
 
@@ -133,158 +172,542 @@ $$
 
 ## Model Assumptions - Priors {.smaller}
 
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/Variogram_fit.png" style="zoom: 10%;" />
+
+:::
+
+The residual plot of semivariance from nonspatial model could help with our decision of the prior and starting value settings (Banerjee, Carlin, and Gelfand (2014))
+
 -   $\beta \sim N(0, 1000I_p)$
     -   We assume independence between explanatory variables
 
--   $\phi \sim U(1, 10)$
+## Model Assumptions - Priors {.smaller}
+
+-   $\phi \sim U(3/20, 3/0.1)$
+    -   Since we plan to use exponential model to specify the covariance function, where the spatial correlation is given by
+
+        $$p(d)=exp(-d/\phi)$$ we define the distance, $d_0$ , at which this correlation drops to 0.05 as the "effective spatial range" ,then $$
+        \phi =  log(0.5)/d_0\approx 3/d_0
+        $$
+
     -   We assume large decay factor
 
+    -   Starting value: 3/10, since the range of the semi-variogram is close to 10
+
+## Model Assumptions - Priors {.smaller}
+
 -   $\sigma^2 \sim Inv.G(2, 2)$
-    -   Chose because a webpage method
+    -   Chose because the sill value of residuals plot is close to 0.5
+    -   Starting value: same as 0.5
 
 -   $\tau^2 \sim Inv.G(2, 0.1)$
-    -   Chose because a webpage method
+    -   Chose because we think the mean value of $\tau^2$ should be a small number
+    -   Starting value 0.1, since the nugget value of the plot is close to 0.
+-   Tuning: $\phi=0.05, \tau^2=0.01, \sigma^2=0.01$
 
+## MCMC Trace - Full GP {.smaller}
 
-## Results - MCMC Trace {.smaller}
+-   MCMC samples: 50, 000
+
+-   Acceptance rate: 51.7%
+
+-   Running time: 157.3s
+
+-   Convergence: $\sigma^2$ and $\tau^2$ seem to reach convergence, since their trace plot don't have many flat areas, and the density distribution appear to be unimodal and symmetric, indicating precise estimation
+
+-   Convergence: trace plot of $\phi$ tend to have a skewed distribution that does not look ideal and there are a lot of flat sections in its trace plot as well.
+
+::: {style="font-size:0.7em;"}
 
 :::: {.columns}
 
-::: {.column width="33%"}
+::: {.column width="50%"}
 
-![](./presentation.assets/Theta_Trace_sigma_Bayes.png)
+::: {style="text-align:center;"}
 
-:::
-
-::: {.column width="33%"}
-
-![](./presentation.assets/Theta_Trace_tau_Bayes.png)
+**Empirical mean, standard deviation and standard error**
 
 :::
 
-::: {.column width="33%"}
+|            |  Mean   |   SD    | Naive SE  | Time-series SE |
+| :--------: | :-----: | :-----: | :-------: | :------------: |
+| $\sigma^2$ | 0.4683  | 0.05980 | 2.674e-04 |   0.0010711    |
+|  $\tau^2$  | 0.1730  | 0.01491 | 6.668e-05 |   0.0002933    |
+|   $\phi$   | 22.4706 | 5.42120 | 2.424e-02 |   0.3252332    |
 
-![](./presentation.assets/Theta_Trace_phi_Bayes-1714001656182-17.png)
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+**Quantiles for each variable**
+
+:::
+
+|            |  2.5%   |   25%   |   50%   |   75%   |  97.5%  |
+| :--------: | :-----: | :-----: | :-----: | :-----: | :-----: |
+| $\sigma^2$ | 0.3611  | 0.4258  | 0.4648  | 0.5058  | 0.5928  |
+|  $\tau^2$  | 0.1459  | 0.1626  | 0.1724  | 0.1824  | 0.2040  |
+|   $\phi$   | 10.6424 | 18.8733 | 23.2973 | 26.9326 | 29.8832 |
 
 :::
 
 ::::
 
-## Results - MCMC Diagnose {.smaller}
+:::
 
-**Final values**:
+## MCMC Trace - Full GP {.smaller}
 
-- $\beta = [a,b,c]^T, \sigma^2 = a, \tau^2 = a, \phi = a$
+:::: {.columns}
 
-::: {style="text-align:center;"}
+::: {.column width="50%"}
 
-<img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 8%;" />
+![](./presentation.assets/Theta_Trace_Bayes.png)
 
 :::
 
-## Results - Validation
+::: {.column width="50%"}
+
+<img src="./presentation.assets/Trace_Bayes.png" style="zoom:10%;" />
+
+:::
+
+::::
+
+## MCMC Trace - Low Rank GP {.smaller}
+
+-   MCMC samples: 50, 000
+-   Acceptance rate: 7.71%
+-   knots grid: $6\times6$
+-   Running time: 29.8s
+-   Convergence: Like the fullGP model, the trace plot and density plot of $\sigma^2$ and $\tau^2$ suggest convergence, but may not as good as fullGP model since there are more fluctuation in the plots
+-   The density plot of $\phi$ is still skewed distributed, but according to the trace plot the convergence performance is better than fullGP model.
+
+::: {style="font-size:0.7em;"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+**Empirical mean, standard deviation and standard error**
+
+:::
+
+|            |  Mean  |   SD    | Naive SE  | Time-series SE |
+| :--------: | :----: | :-----: | :-------: | :------------: |
+| $\sigma^2$ | 0.2024 | 0.05776 | 0.0002583 |    0.002145    |
+|  $\tau^2$  | 0.3579 | 0.05400 | 0.0002415 |    0.002185    |
+|   $\phi$   | 0.2537 | 0.07618 | 0.0003407 |    0.003548    |
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+**Quantiles for each variable**
+
+:::
+
+|            |  2.5%  |  25%   |  50%   |  75%   | 97.5%  |
+| :--------: | :----: | :----: | :----: | :----: | :----: |
+| $\sigma^2$ | 0.1067 | 0.1608 | 0.1968 | 0.2381 | 0.3300 |
+|  $\tau^2$  | 0.2444 | 0.3236 | 0.3608 | 0.3959 | 0.4547 |
+|   $\phi$   | 0.1533 | 0.1917 | 0.2422 | 0.3010 | 0.4288 |
+
+:::
+
+::::
+
+:::
+
+## MCMC Trace - Low Rank GP {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/Theta_Trace_LRBayes.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/LRGP_trace-1714053137368-82.png)
+
+:::
+
+::::
+
+## MCMC Trace - Nearest Neighbour GP {.smaller}
+
+-   We explored the trace plot of NNGP model but found that the previous prior settings did not fit to the NNGP latent and response model.
+
+-   We changed the priors here as
+
+-   $\beta \sim N(0, 1000I_p)$
+
+-   $\phi \sim U(15, 60)$
+
+    -   Starting value: 30
+
+-   $\sigma^2 \sim Inv.G(2, 0.5)$
+
+    -   Starting value: 1
+
+-   $\tau^2 \sim Inv.G(2, 0.5)$
+
+    -   Starting value: 0.5
+
+-   Turning: $\phi=2, \tau^2=0.2, \sigma^2=0.2$;
+
+-   Nearest Neighbor: 10
+
+## MCMC Trace - Nearest Neighbour GP {.smaller}
+
+-   Acceptance Rate: 17.92%
+
+-   Running time: 92.4s
+
+-   MCMC Results for Both Intent and Response NNGP Models
+
+    -   The trace plot of $\sigma^2, \tau^2$ show convergence
+
+    -   The trace plot of $\phi$ does not settle around a particular value and instead shows considerable movement across a wide range of values, indicating convergence of $\phi$ here is not ideal.
+
+::: {style="font-size:0.7em;"}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+**Empirical mean, standard deviation and standard error**
+
+:::
+
+|            |  Mean   |   SD    | Naive SE  | Time-series SE |
+| :--------: | :-----: | :-----: | :-------: | :------------: |
+| $\sigma^2$ | 0.5908  | 0.06990 | 3.126e-04 |    0.001117    |
+|  $\tau^2$  | 0.1614  | 0.01485 | 6.639e-05 |    0.000346    |
+|   $\phi$   | 30.4587 | 9.31411 | 4.165e-02 |    0.532808    |
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+**Quantiles for each variable**
+
+:::
+
+|            |  2.5%   |   25%   |   50%   |   75%   |  97.5%  |
+| :--------: | :-----: | :-----: | :-----: | :-----: | :-----: |
+| $\sigma^2$ | 0.4650  | 0.5425  | 0.5869  | 0.6347  | 0.7395  |
+|  $\tau^2$  | 0.1352  | 0.1511  | 0.1605  | 0.1707  | 0.1918  |
+|   $\phi$   | 16.6526 | 23.2558 | 29.1885 | 36.2258 | 52.5989 |
+
+:::
+
+::::
+
+:::
+
+## MCMC Trace - Nearest Neighbour GP {.smaller}
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+![Response Model](./presentation.assets/Trace_NNBayes(Response).png)
+
+:::
+
+:::
+
+::: {.column width="50%"}
+
+::: {style="text-align:center;"}
+
+![Latent Model](./presentation.assets/Trace_NNBayes-1714047587608-44.png)
+
+:::
+
+:::
+
+::::
+
+## MCMC Diagnoses - Full GP {.smaller}
+
+::: {style="font-size:0.7em;"}
+
+**Gelman Dignostic:**
+
+-   We changed the starting values and ran MCMC for each model for 3 times to gain the plot of shrink factor that considers within-chain variance and between-chain variance.
+-   In fullGP model, given multiple runs, the shrink factors of $\sigma^2$ and $\phi$ are quickly drop to 1, that show good convergence, while $\tau^2$ 's plot drops a bit slowly.
+-   Multivariate PSRF(Potential Scale Reduction Factor): 1 (Indicates convergence as well)
+
+:::
+
+::: {style="text-align:center;"}
+<img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 7%;"/>
+:::
+
+## MCMC Diagnoses - LRGP {.smaller}
+
+**Gelman Dignostic**
+
+-   Lack of convergence according to the fluctuation of the plots of all the parameters
+-   Multivariate PSRF: 1.03
+
+::: {style="text-align:center;"}
+<img src="./presentation.assets/GelmanDiag_LRBayes-1714047790183-46.png" style="zoom:8%;" />
+:::
+
+## MCMC Diagnoses - NNGP {.smaller}
+
+::: {style="font-size:0.8em;"}
+
+**Gelman Dignostic**
+
+-   All the plots are dropped quickly to 1 -\> Convergence
+-   $\sigma^2$ and $\tau^2$ show peaks at the start of their PSRF plots
+-   Multivariate PSRF: 1
+
+:::
+
+::: {style="text-align:center;"}
+<img src="./presentation.assets/GelmanDiag_NNBayes-1714047843853-48.png" style="zoom:8%;" />
+:::
+
+## MCMC Diagnoses - Summary {.smaller}
+
+::: {style="font-size:0.8em;"}
+
+|             |  Full GP  |   LRGP    | NNGP<br />(latent) | NNGP<br />(Response) |
+| :---------: | :-------: | :-------: | :----------------: | :------------------: |
+|    $DIC     |           |           |                    |                      |
+|    bar.D    | -532.3148 | 179.1369  |         -          |          -           |
+| D.bar.Omega | -775.2592 | 164.0365  |         -          |          -           |
+|     pD      | 242.9444  |  15.1004  |      245.9763      |          -           |
+|     DIC     | -289.3703 | 194.2373  |      880.0929      |          -           |
+|      L      |     -     |     -     |     -194.0702      |          -           |
+|     $GP     |           |           |                    |                      |
+|      G      | 61.08594  | 293.8502  |      61.19716      |       340.3536       |
+|      P      | 138.35194 | 323.2817  |     141.61156      |       479.2075       |
+|      D      | 199.43788 | 617.1320  |     202.80872      |       819.5612       |
+|    $GRS     | 663.4488  | -156.3317 |      653.3704      |      -272.9311       |
+
+:::
+
+## MCMC Diagnoses - Summary {.smaller}
+
+| Effective Sample Size |  Full GP  |   LRGP   | NNGP<br />(latent) | NNGP<br />(Response) |
+| :-------------------: | :-------: | :------: | :----------------: | :------------------: |
+|      $\sigma^2$       | 3445.5804 | 725.3773 |     3912.5011      |       3444.001       |
+|       $\tau^2$        | 2586.3832 | 610.8421 |     1840.5902      |       3590.207       |
+|        $\phi$         | 293.4634  | 461.0998 |      305.5915      |       2941.707       |
+
+
+
+## Validation - Full GP {.smaller}
 
 - Testing set: 25% of the data
+- Most of the points are close to reference line ($slope=1$ )
+- Low confidence intervals among all the models
+- Nearly no spatial dependence on the semivariogram
+- Low residual values (close to 0.1)
 
-::: {style="text-align:center;"}
+:::: {.columns}
 
-<img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png" style="zoom: 15%;" />
+::: {.column width="50%"}
+
+<img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png"  />
 
 :::
 
-## Results - Residuals
-
-::: {style="text-align:center;"}
+::: {.column width="50%"}
 
 ![](./presentation.assets/Residual_Bayes-1714000947505-11.png)
 
 :::
 
-## Result - Compare with Linear Model
+::::
+
+## Validation - Low Rank GP {.smaller}
+
+-   More deviation points from reference line comparing to full rank GP model
+-   Higher confidence intervals than full GP model
+-   Less spatial dependence than LM model
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/PredictvsTest_LRBayes-1714048911319-50.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/Low Rank Residual_Bayes-1714048934393-52.png)
+
+:::
+
+::::
+
+## Validation - NNGP {.smaller}
+
+-   According to residuals, latent model is significantly better than response model, the latter one seems failing to capture spatial variance that still can notice in the semivariogram.
+-   In terms of the distribution of residuals, the two models tend to have similar spatial patterns that points with larger residuals are both gathered around the eastern part of the research region.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/NN_Residual_Bayes(Response)-1714052616731-72.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/NN_Residual_Bayes-1714052664959-74.png)
+
+:::
+
+::::
+
+## Validation - NNGP {.smaller}
+
+-   Comparing two models' prediction on validation data, the scatters from latent model are closer to the reference line and has narrower confidence intervals generally.
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](./presentation.assets/PredictvsTest_NNBayes(Response)-1714052707321-76.png)
+
+:::
+
+::: {.column width="50%"}
+
+![](./presentation.assets/PredictvsTest_NNBayes-1714052735526-78.png)
+
+:::
+
+::::
+
+## Prediction {.smaller}
 
 ::: {style="text-align:center;"}
 
-![](./presentation.assets/Compare_LM_Bayes.png)
+![Prediction for Points with Missing Values within Michigan](./presentation.assets/Prediction_Extra.png)
 
 :::
 
-## Low Rank GP {.smaller}
+## Further Attempts: Non-stationary Model[^5] {.smaller}
 
-- Same priors, starting values, tuning values
-- Same kernel (exponential)
-- Knot size $\mathcal{K} = $
-- Computing time: $\%$ in reduction (from …)
+**Model Description**
+
+- $Y = X + \epsilon$ where $\epsilon \sim N(0, \sigma^2)$
+- $X \sim MVN(\mu 1 + B\phi, diag[(p\exp[B\psi])^2])$
+- $\phi \sim MVN(0, \Sigma_{\phi}$)
+- $\Sigma_{\phi} = (\tau_{\phi}^2[D_{\phi}-\alpha_{\phi}W_{\phi}]^{-1})$
+
+**Priors**
+
+- $\alpha_{\phi} \sim Beta(p_1,p_2)$
+- $\tau_{\phi}^2 \sim Gamma(q_1,q_2)$
+- $\rho \sim \text{Truncated Cauchy}(0, s)$
+
+## Further Attempts: Non-stationary Model
+
+**Fitting Results**
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-![](./presentation.assets/PredictvsTest_LRBayes.png)
+![](./presentation.assets/non_sta_residual_statistics.png)
+
+::: {style="text-align:center; font-size:0.7em"}
+
+Charts of Residuals
+
+:::
 
 :::
 
 ::: {.column width="50%"}
 
-![](./presentation.assets/Low Rank Residual_Bayes.png)
+![](./presentation.assets/non_sta_residual_sng.png)
+
+::: {style="text-align:center; font-size:0.7em"}
+
+Signs of Residuals on Each Location
+
+:::
 
 :::
 
 ::::
 
+## Further Attempts: Non-stationary Model
 
-
-## Nearest Neighbour GP {.smaller}
-
-- Same priors, starting values, tuning values
-- Same kernel (exponential)
-- Neighbour size: 10
-- Computing time: $\%$ in reduction
-- Almost as good as full rank GP
+**Prediction results**
 
 :::: {.columns}
 
 ::: {.column width="50%"}
 
-![](./presentation.assets/PredictvsTest_NNBayes(Response).png)
+![](./presentation.assets/non_sta_pred_mean.png)
+
+::: {style="text-align:center; font-size:0.7em"}
+
+Non-Stationary Model Prediction: Mean
+
+:::
 
 :::
 
 ::: {.column width="50%"}
 
-![](./presentation.assets/NN_Residual_Bayes(Response)-1714010822869-26.png)
+![](./presentation.assets/non_sta_pred_sd.png)
+
+::: {style="text-align:center; font-size:0.7em"}
+
+Non-Stationary Model Prediction: Standard Deviation
+
+:::
 
 :::
 
 ::::
 
+## Discussion and Improvements {.smaller}
 
+-   Scale
+-   Cloud cover
+-   Static
+-   Response model vs Latent model
 
-## Prediction - Interpolating the damaged values
-
-- With full rank GP model
-
-
-
-## Prediction - Light Pollution in Ann Arbor
-
-- With full rank GP model
-
-
-
-## Attempts: Non-stationary Model
-
-
-
-## Discussion on Improvements
-
--   Scale too large
--   Cloud cover issues
--   static, not temporal
+    Response model's performance on our dataset is not as good as latent model, which is probably caused by the setting of the priors since response model's nugget term is within the covariance, may consider adjust the prior of NNGP model more meticulously.
 
 
 
 ::: {style="text-align:center;"}
 # Thank You!
+
 :::
 
 [^4]: Román, M. O., Wang, Z., Sun, Q., Kalb, V., Miller, S. D., Molthan, A., … & Masuoka, E. J. (2018). NASA's Black Marble nighttime lights product suite. Remote Sensing of Environment, 210, 113-143, [doi:10.1016/j.rse.2018.03.017](https://doi.org/10.1016/j.rse.2018.03.017).
+[^5]: Ellefsen, K.J., and Van Gosen, B.S., 2020, Bayesian modeling of non-stationary, univariate, spatial data for the Earth sciences: U.S. Geological Survey Techniques and Methods, book 7, chap. C24, 20 p., https://doi.org/10.3133/tm7C24.

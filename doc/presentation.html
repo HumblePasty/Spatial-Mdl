@@ -340,63 +340,90 @@ Map Mad Scientists<br>Kunxi Li, Haolin Li, Jiayuan Xiao
 <h2>Motivation</h2>
 <div style="text-align:center;">
 <p><strong>Light Pollution</strong></p>
-<p><img src="./presentation.assets/35732ace7b56363ff57b7f79f401ecb.jpg" alt="35732ace7b56363ff57b7f79f401ecb" style="zoom: 40%;"></p>
+<p><img src="./presentation.assets/35732ace7b56363ff57b7f79f401ecb.jpg" alt="I took this in Kunming, Yunnan, " style="zoom: 33%;"></p>
+<div style="font-size:0.6em;">
+<p>Winter night in Kunming, Yunan, China, Jan 16, 2023</p>
+</div>
 </div>
 </section>
-<section id="motivation-continue" class="slide level2 smaller">
-<h2>Motivation: Continue</h2>
+<section id="motivation-1" class="slide level2 smaller">
+<h2>Motivation</h2>
 <ul>
-<li><p><strong>Magnitude of object brightness</strong></p>
+<li><p><strong>Magnitude of Celestial Body</strong></p>
 <ul>
 <li>Range <span class="math inline">\([-26.73, 30]\)</span></li>
-<li>Sun -26.73; full moon -12.6; faintest stars observable with naked eye +6</li>
+<li>Sun -26.73</li>
+<li>Full moon -12.6</li>
+<li>Faintest stars observable with naked eye +6</li>
 </ul></li>
 <li><p><strong>Naked Eye Limiting Magnitude (<code>NELM</code>)</strong></p></li>
 <li><p><strong>Magnitude Per Square Arcsecond (<code>MPSAS</code>)</strong> <span class="math display">\[
 NELM = \text{some complex function}(MPSAS)
 \]</span></p>
 <ul>
-<li>Range <span class="math inline">\([16 (darkest) - 22 (brightest)]\)</span></li>
+<li>Range <span class="math inline">\([16 (brightest) - 22 (darkest)]\)</span></li>
 <li>Measured by equipment (Sky Quality Meter)</li>
 </ul></li>
 </ul>
 </section>
-<section id="data-source-main" class="slide level2 smaller">
-<h2>Data Source (Main)</h2>
+<section id="data-source" class="slide level2">
+<h2>Data Source</h2>
+<div class="columns">
+<div class="column" style="width:35%;">
+<div style="font-size:0.7em;">
 <p><strong>Globe at Night Project</strong> (<a href="https://globeatnight.org/maps-data/">Link</a>)</p>
 <ul>
-<li>Light pollution report at 29404 locations (2020)</li>
-<li>Sky brightness measurement (<code>MPSAS</code>) at 2030 locations</li>
-<li>Darker means higher <code>NELM</code></li>
+<li>Light pollution report at <code>29404</code> locations (2020)</li>
+<li>Sky brightness measurement (<code>MPSAS</code>) at <code>2030</code> locations
+<ul>
+<li>Around <code>800</code> inside continental US</li>
+</ul></li>
+<li>Darker means higher <code>NELM</code> (less light pollution)</li>
 </ul>
+</div>
+</div><div class="column" style="width:65%;">
 <div style="text-align:center;">
-<p><img src="./presentation.assets/2023-map.original.png" style="zoom: 50%;"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="./presentation.assets/2023-map.original.png"></p>
+<figcaption><code>NELM</code> at All Report Locations in 2020</figcaption>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </section>
-<section id="explanatory-variables" class="slide level2 smaller">
-<h2>Explanatory Variables</h2>
+<section id="data-source-1" class="slide level2 smaller">
+<h2>Data Source</h2>
+<p><strong>Explanatory Variables</strong></p>
 <ul>
-<li><strong>Population Density</strong>: Gridded Population of the World<sup>1</sup></li>
-<li><strong>Land Price</strong>: Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States<sup>2</sup></li>
-<li><strong>Electricity Consumption</strong>: Global 1 km × 1 km gridded revised real gross domestic product and electricity consumption during 1992-2019 based on calibrated nighttime light data<sup>3</sup></li>
+<li><strong>Population Density<sup>1</sup></strong></li>
+<li><strong>Land Price<sup>2</sup></strong></li>
+<li><strong>Electricity Consumption<sup>3</sup></strong></li>
 </ul>
+<p>All are raster datasets and are sampled at the same locations as <code>MPSAS</code> measurements.</p>
 <aside><ol class="aside-footnotes"><li id="fn1"><p>Center for International Earth Science Information Network - CIESIN - Columbia University. 2018. Gridded Population of the World, Version 4 (GPWv4): Population Density Adjusted to Match 2015 Revision UN WPP Country Totals, Revision 11. Palisades, New York: NASA Socioeconomic Data and Applications Center (SEDAC). https://doi.org/10.7927/H4F47M65. Accessed 22 04 2024.</p></li><li id="fn2"><p>Nolte, Christoph (2020). Data for: High-resolution land value maps reveal underestimation of conservation costs in the United States [Dataset]. Dryad. https://doi.org/10.5061/dryad.np5hqbzq9</p></li><li id="fn3"><p>Chen, Jiandong; Gao, Ming (2021). Global 1 km × 1 km gridded revised real gross domestic product and electricity consumption during 1992-2019 based on calibrated nighttime light data. figshare. Dataset. https://doi.org/10.6084/m9.figshare.17004523.v1</p></li></ol></aside></section>
-<section id="goal" class="slide level2">
-<h2>Goal</h2>
+<section id="our-goal" class="slide level2">
+<h2>Our Goal</h2>
+<div style="font-size:0.9em;">
 <ul>
-<li>Impute missing or damaged data in the original dataset (due to unofficial reports)</li>
-<li>Predict light pollution in Ann Arbor Area and interpret in NELM</li>
-<li>Discuss the impact of population density, land price and electricity consumption on the light pollution</li>
+<li>Apply different spatial Bayesian models and compare performance;</li>
+<li>Impute missing or damaged data in the original dataset (due to unofficial reports);</li>
+<li>Predict light pollution in Michigan.</li>
 </ul>
+</div>
 </section>
 <section id="our-model" class="slide level2 smaller">
 <h2>Our Model</h2>
+<div style="font-size:0.9em;">
 <p><span class="math display">\[
 y(s) = \beta^Tx(s) + w(s) + \epsilon(s), s\in D
 \]</span></p>
-<p><strong>Response Variable</strong>:</p>
+<p><strong>Response Variable</strong>: <span class="math display">\[
+y(s)
+\]</span></p>
 <ul>
-<li><span class="math inline">\(y(s)\)</span>: <code>MPSAS</code> at location <span class="math inline">\(S\)</span> (Univariate)</li>
+<li><code>MPSAS</code> measurement at location <span class="math inline">\(s\)</span> (Univariate)</li>
 </ul>
 <p><strong>Explanatory Variables</strong> <span class="math display">\[
 x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
@@ -407,6 +434,7 @@ x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
 <li><span class="math inline">\(x_3\)</span>: Land Price</li>
 <li><span class="math inline">\(x_4\)</span>: Electricity Consumption</li>
 </ul>
+</div>
 </section>
 <section id="model-assumptions---gp" class="slide level2 smaller">
 <h2>Model Assumptions - GP</h2>
@@ -437,10 +465,10 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 </div>
 </div>
 <div style="font-size:0.8em;">
-<p><em>Why not use night time light data as explanatory?</em></p>
+<p><em>Why not use night time light data as an explanatory variable?</em></p>
 <ul>
-<li>Means the same thing as light pollution</li>
-<li>Actual meaning of the model</li>
+<li>Only measuring differences</li>
+<li>Does not explain anything</li>
 </ul>
 </div>
 </div>
@@ -448,122 +476,714 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 <aside><ol class="aside-footnotes"><li id="fn4"><p>Román, M. O., Wang, Z., Sun, Q., Kalb, V., Miller, S. D., Molthan, A., … &amp; Masuoka, E. J. (2018). NASA’s Black Marble nighttime lights product suite. Remote Sensing of Environment, 210, 113-143, <a href="https://doi.org/10.1016/j.rse.2018.03.017">doi:10.1016/j.rse.2018.03.017</a>.</p></li></ol></aside></section>
 <section id="model-assumptions---priors" class="slide level2 smaller">
 <h2>Model Assumptions - Priors</h2>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/Variogram_fit.png" style="zoom: 10%;"></p>
+</div>
+<p>The residual plot of semivariance from nonspatial model could help with our decision of the prior and starting value settings (Banerjee, Carlin, and Gelfand (2014))</p>
 <ul>
 <li><span class="math inline">\(\beta \sim N(0, 1000I_p)\)</span>
 <ul>
 <li>We assume independence between explanatory variables</li>
 </ul></li>
-<li><span class="math inline">\(\phi \sim U(1, 10)\)</span>
+</ul>
+</section>
+<section id="model-assumptions---priors-1" class="slide level2 smaller">
+<h2>Model Assumptions - Priors</h2>
 <ul>
-<li>We assume large decay factor</li>
+<li><span class="math inline">\(\phi \sim U(3/20, 3/0.1)\)</span>
+<ul>
+<li><p>Since we plan to use exponential model to specify the covariance function, where the spatial correlation is given by</p>
+<p><span class="math display">\[p(d)=exp(-d/\phi)\]</span> we define the distance, <span class="math inline">\(d_0\)</span> , at which this correlation drops to 0.05 as the “effective spatial range” ,then <span class="math display">\[
+\phi =  log(0.5)/d_0\approx 3/d_0
+\]</span></p></li>
+<li><p>We assume large decay factor</p></li>
+<li><p>Starting value: 3/10, since the range of the semi-variogram is close to 10</p></li>
 </ul></li>
+</ul>
+</section>
+<section id="model-assumptions---priors-2" class="slide level2 smaller">
+<h2>Model Assumptions - Priors</h2>
+<ul>
 <li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 2)\)</span>
 <ul>
-<li>Chose because a webpage method</li>
+<li>Chose because the sill value of residuals plot is close to 0.5</li>
+<li>Starting value: same as 0.5</li>
 </ul></li>
 <li><span class="math inline">\(\tau^2 \sim Inv.G(2, 0.1)\)</span>
 <ul>
-<li>Chose because a webpage method</li>
+<li>Chose because we think the mean value of <span class="math inline">\(\tau^2\)</span> should be a small number</li>
+<li>Starting value 0.1, since the nugget value of the plot is close to 0.</li>
+</ul></li>
+<li>Tuning: <span class="math inline">\(\phi=0.05, \tau^2=0.01, \sigma^2=0.01\)</span></li>
+</ul>
+</section>
+<section id="mcmc-trace---full-gp" class="slide level2 smaller">
+<h2>MCMC Trace - Full GP</h2>
+<ul>
+<li><p>MCMC samples: 50, 000</p></li>
+<li><p>Acceptance rate: 51.7%</p></li>
+<li><p>Running time: 157.3s</p></li>
+<li><p>Convergence: <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\tau^2\)</span> seem to reach convergence, since their trace plot don’t have many flat areas, and the density distribution appear to be unimodal and symmetric, indicating precise estimation</p></li>
+<li><p>Convergence: trace plot of <span class="math inline">\(\phi\)</span> tend to have a skewed distribution that does not look ideal and there are a lot of flat sections in its trace plot as well.</p></li>
+</ul>
+<div style="font-size:0.7em;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Empirical mean, standard deviation and standard error</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Mean</th>
+<th style="text-align: center;">SD</th>
+<th style="text-align: center;">Naive SE</th>
+<th style="text-align: center;">Time-series SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.4683</td>
+<td style="text-align: center;">0.05980</td>
+<td style="text-align: center;">2.674e-04</td>
+<td style="text-align: center;">0.0010711</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.1730</td>
+<td style="text-align: center;">0.01491</td>
+<td style="text-align: center;">6.668e-05</td>
+<td style="text-align: center;">0.0002933</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">22.4706</td>
+<td style="text-align: center;">5.42120</td>
+<td style="text-align: center;">2.424e-02</td>
+<td style="text-align: center;">0.3252332</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Quantiles for each variable</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">2.5%</th>
+<th style="text-align: center;">25%</th>
+<th style="text-align: center;">50%</th>
+<th style="text-align: center;">75%</th>
+<th style="text-align: center;">97.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.3611</td>
+<td style="text-align: center;">0.4258</td>
+<td style="text-align: center;">0.4648</td>
+<td style="text-align: center;">0.5058</td>
+<td style="text-align: center;">0.5928</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.1459</td>
+<td style="text-align: center;">0.1626</td>
+<td style="text-align: center;">0.1724</td>
+<td style="text-align: center;">0.1824</td>
+<td style="text-align: center;">0.2040</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">10.6424</td>
+<td style="text-align: center;">18.8733</td>
+<td style="text-align: center;">23.2973</td>
+<td style="text-align: center;">26.9326</td>
+<td style="text-align: center;">29.8832</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="mcmc-trace---full-gp-1" class="slide level2 smaller">
+<h2>MCMC Trace - Full GP</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/Theta_Trace_Bayes.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img src="./presentation.assets/Trace_Bayes.png" style="zoom:10%;"></p>
+</div>
+</div>
+</section>
+<section id="mcmc-trace---low-rank-gp" class="slide level2 smaller">
+<h2>MCMC Trace - Low Rank GP</h2>
+<ul>
+<li>MCMC samples: 50, 000</li>
+<li>Acceptance rate: 7.71%</li>
+<li>knots grid: <span class="math inline">\(6\times6\)</span></li>
+<li>Running time: 29.8s</li>
+<li>Convergence: Like the fullGP model, the trace plot and density plot of <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\tau^2\)</span> suggest convergence, but may not as good as fullGP model since there are more fluctuation in the plots</li>
+<li>The density plot of <span class="math inline">\(\phi\)</span> is still skewed distributed, but according to the trace plot the convergence performance is better than fullGP model.</li>
+</ul>
+<div style="font-size:0.7em;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Empirical mean, standard deviation and standard error</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Mean</th>
+<th style="text-align: center;">SD</th>
+<th style="text-align: center;">Naive SE</th>
+<th style="text-align: center;">Time-series SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.2024</td>
+<td style="text-align: center;">0.05776</td>
+<td style="text-align: center;">0.0002583</td>
+<td style="text-align: center;">0.002145</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.3579</td>
+<td style="text-align: center;">0.05400</td>
+<td style="text-align: center;">0.0002415</td>
+<td style="text-align: center;">0.002185</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">0.2537</td>
+<td style="text-align: center;">0.07618</td>
+<td style="text-align: center;">0.0003407</td>
+<td style="text-align: center;">0.003548</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Quantiles for each variable</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">2.5%</th>
+<th style="text-align: center;">25%</th>
+<th style="text-align: center;">50%</th>
+<th style="text-align: center;">75%</th>
+<th style="text-align: center;">97.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.1067</td>
+<td style="text-align: center;">0.1608</td>
+<td style="text-align: center;">0.1968</td>
+<td style="text-align: center;">0.2381</td>
+<td style="text-align: center;">0.3300</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.2444</td>
+<td style="text-align: center;">0.3236</td>
+<td style="text-align: center;">0.3608</td>
+<td style="text-align: center;">0.3959</td>
+<td style="text-align: center;">0.4547</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">0.1533</td>
+<td style="text-align: center;">0.1917</td>
+<td style="text-align: center;">0.2422</td>
+<td style="text-align: center;">0.3010</td>
+<td style="text-align: center;">0.4288</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="mcmc-trace---low-rank-gp-1" class="slide level2 smaller">
+<h2>MCMC Trace - Low Rank GP</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/Theta_Trace_LRBayes.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/LRGP_trace-1714053137368-82.png"></p>
+</div>
+</div>
+</section>
+<section id="mcmc-trace---nearest-neighbour-gp" class="slide level2 smaller">
+<h2>MCMC Trace - Nearest Neighbour GP</h2>
+<ul>
+<li><p>We explored the trace plot of NNGP model but found that the previous prior settings did not fit to the NNGP latent and response model.</p></li>
+<li><p>We changed the priors here as</p></li>
+<li><p><span class="math inline">\(\beta \sim N(0, 1000I_p)\)</span></p></li>
+<li><p><span class="math inline">\(\phi \sim U(15, 60)\)</span></p>
+<ul>
+<li>Starting value: 30</li>
+</ul></li>
+<li><p><span class="math inline">\(\sigma^2 \sim Inv.G(2, 0.5)\)</span></p>
+<ul>
+<li>Starting value: 1</li>
+</ul></li>
+<li><p><span class="math inline">\(\tau^2 \sim Inv.G(2, 0.5)\)</span></p>
+<ul>
+<li>Starting value: 0.5</li>
+</ul></li>
+<li><p>Turning: <span class="math inline">\(\phi=2, \tau^2=0.2, \sigma^2=0.2\)</span>;</p></li>
+<li><p>Nearest Neighbor: 10</p></li>
+</ul>
+</section>
+<section id="mcmc-trace---nearest-neighbour-gp-1" class="slide level2 smaller">
+<h2>MCMC Trace - Nearest Neighbour GP</h2>
+<ul>
+<li><p>Acceptance Rate: 17.92%</p></li>
+<li><p>Running time: 92.4s</p></li>
+<li><p>MCMC Results for Both Intent and Response NNGP Models</p>
+<ul>
+<li><p>The trace plot of <span class="math inline">\(\sigma^2, \tau^2\)</span> show convergence</p></li>
+<li><p>The trace plot of <span class="math inline">\(\phi\)</span> does not settle around a particular value and instead shows considerable movement across a wide range of values, indicating convergence of <span class="math inline">\(\phi\)</span> here is not ideal.</p></li>
 </ul></li>
 </ul>
-</section>
-<section id="results---mcmc-trace" class="slide level2 smaller">
-<h2>Results - MCMC Trace</h2>
+<div style="font-size:0.7em;">
 <div class="columns">
-<div class="column" style="width:33%;">
-<p><img data-src="./presentation.assets/Theta_Trace_sigma_Bayes.png"></p>
-</div><div class="column" style="width:33%;">
-<p><img data-src="./presentation.assets/Theta_Trace_tau_Bayes.png"></p>
-</div><div class="column" style="width:33%;">
-<p><img data-src="./presentation.assets/Theta_Trace_phi_Bayes-1714001656182-17.png"></p>
+<div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Empirical mean, standard deviation and standard error</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Mean</th>
+<th style="text-align: center;">SD</th>
+<th style="text-align: center;">Naive SE</th>
+<th style="text-align: center;">Time-series SE</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.5908</td>
+<td style="text-align: center;">0.06990</td>
+<td style="text-align: center;">3.126e-04</td>
+<td style="text-align: center;">0.001117</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.1614</td>
+<td style="text-align: center;">0.01485</td>
+<td style="text-align: center;">6.639e-05</td>
+<td style="text-align: center;">0.000346</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">30.4587</td>
+<td style="text-align: center;">9.31411</td>
+<td style="text-align: center;">4.165e-02</td>
+<td style="text-align: center;">0.532808</td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:50%;">
+<div style="text-align:center;">
+<p><strong>Quantiles for each variable</strong></p>
+</div>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">2.5%</th>
+<th style="text-align: center;">25%</th>
+<th style="text-align: center;">50%</th>
+<th style="text-align: center;">75%</th>
+<th style="text-align: center;">97.5%</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">0.4650</td>
+<td style="text-align: center;">0.5425</td>
+<td style="text-align: center;">0.5869</td>
+<td style="text-align: center;">0.6347</td>
+<td style="text-align: center;">0.7395</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">0.1352</td>
+<td style="text-align: center;">0.1511</td>
+<td style="text-align: center;">0.1605</td>
+<td style="text-align: center;">0.1707</td>
+<td style="text-align: center;">0.1918</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">16.6526</td>
+<td style="text-align: center;">23.2558</td>
+<td style="text-align: center;">29.1885</td>
+<td style="text-align: center;">36.2258</td>
+<td style="text-align: center;">52.5989</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </section>
-<section id="results---mcmc-diagnose" class="slide level2 smaller">
-<h2>Results - MCMC Diagnose</h2>
-<p><strong>Final values</strong>:</p>
+<section id="mcmc-trace---nearest-neighbour-gp-2" class="slide level2 smaller">
+<h2>MCMC Trace - Nearest Neighbour GP</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div style="text-align:center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="./presentation.assets/Trace_NNBayes(Response).png"></p>
+<figcaption>Response Model</figcaption>
+</figure>
+</div>
+</div>
+</div><div class="column" style="width:50%;">
+<div style="text-align:center;">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="./presentation.assets/Trace_NNBayes-1714047587608-44.png"></p>
+<figcaption>Latent Model</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="mcmc-diagnoses---full-gp" class="slide level2 smaller">
+<h2>MCMC Diagnoses - Full GP</h2>
+<div style="font-size:0.7em;">
+<p><strong>Gelman Dignostic:</strong></p>
 <ul>
-<li><span class="math inline">\(\beta = [a,b,c]^T, \sigma^2 = a, \tau^2 = a, \phi = a\)</span></li>
+<li>We changed the starting values and ran MCMC for each model for 3 times to gain the plot of shrink factor that considers within-chain variance and between-chain variance.</li>
+<li>In fullGP model, given multiple runs, the shrink factors of <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\phi\)</span> are quickly drop to 1, that show good convergence, while <span class="math inline">\(\tau^2\)</span> ’s plot drops a bit slowly.</li>
+<li>Multivariate PSRF(Potential Scale Reduction Factor): 1 (Indicates convergence as well)</li>
+</ul>
+</div>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 7%;"></p>
+</div>
+</section>
+<section id="mcmc-diagnoses---lrgp" class="slide level2 smaller">
+<h2>MCMC Diagnoses - LRGP</h2>
+<p><strong>Gelman Dignostic</strong></p>
+<ul>
+<li>Lack of convergence according to the fluctuation of the plots of all the parameters</li>
+<li>Multivariate PSRF: 1.03</li>
 </ul>
 <div style="text-align:center;">
-<p><img src="./presentation.assets/GelmanDiag_Bayes-1714001972454-20.png" style="zoom: 8%;"></p>
+<p><img src="./presentation.assets/GelmanDiag_LRBayes-1714047790183-46.png" style="zoom:8%;"></p>
 </div>
 </section>
-<section id="results---validation" class="slide level2">
-<h2>Results - Validation</h2>
+<section id="mcmc-diagnoses---nngp" class="slide level2 smaller">
+<h2>MCMC Diagnoses - NNGP</h2>
+<div style="font-size:0.8em;">
+<p><strong>Gelman Dignostic</strong></p>
+<ul>
+<li>All the plots are dropped quickly to 1 -&gt; Convergence</li>
+<li><span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\tau^2\)</span> show peaks at the start of their PSRF plots</li>
+<li>Multivariate PSRF: 1</li>
+</ul>
+</div>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/GelmanDiag_NNBayes-1714047843853-48.png" style="zoom:8%;"></p>
+</div>
+</section>
+<section id="mcmc-diagnoses---summary" class="slide level2 smaller">
+<h2>MCMC Diagnoses - Summary</h2>
+<div style="font-size:0.8em;">
+<table>
+<colgroup>
+<col style="width: 16%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 26%">
+<col style="width: 29%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">Full GP</th>
+<th style="text-align: center;">LRGP</th>
+<th style="text-align: center;">NNGP<br>(latent)</th>
+<th style="text-align: center;">NNGP<br>(Response)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">$DIC</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">bar.D</td>
+<td style="text-align: center;">-532.3148</td>
+<td style="text-align: center;">179.1369</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">D.bar.Omega</td>
+<td style="text-align: center;">-775.2592</td>
+<td style="text-align: center;">164.0365</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">pD</td>
+<td style="text-align: center;">242.9444</td>
+<td style="text-align: center;">15.1004</td>
+<td style="text-align: center;">245.9763</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">DIC</td>
+<td style="text-align: center;">-289.3703</td>
+<td style="text-align: center;">194.2373</td>
+<td style="text-align: center;">880.0929</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">L</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: center;">-194.0702</td>
+<td style="text-align: center;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">$GP</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">G</td>
+<td style="text-align: center;">61.08594</td>
+<td style="text-align: center;">293.8502</td>
+<td style="text-align: center;">61.19716</td>
+<td style="text-align: center;">340.3536</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">P</td>
+<td style="text-align: center;">138.35194</td>
+<td style="text-align: center;">323.2817</td>
+<td style="text-align: center;">141.61156</td>
+<td style="text-align: center;">479.2075</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">D</td>
+<td style="text-align: center;">199.43788</td>
+<td style="text-align: center;">617.1320</td>
+<td style="text-align: center;">202.80872</td>
+<td style="text-align: center;">819.5612</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">$GRS</td>
+<td style="text-align: center;">663.4488</td>
+<td style="text-align: center;">-156.3317</td>
+<td style="text-align: center;">653.3704</td>
+<td style="text-align: center;">-272.9311</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="mcmc-diagnoses---summary-1" class="slide level2 smaller">
+<h2>MCMC Diagnoses - Summary</h2>
+<table>
+<colgroup>
+<col style="width: 27%">
+<col style="width: 11%">
+<col style="width: 10%">
+<col style="width: 23%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Effective Sample Size</th>
+<th style="text-align: center;">Full GP</th>
+<th style="text-align: center;">LRGP</th>
+<th style="text-align: center;">NNGP<br>(latent)</th>
+<th style="text-align: center;">NNGP<br>(Response)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\sigma^2\)</span></td>
+<td style="text-align: center;">3445.5804</td>
+<td style="text-align: center;">725.3773</td>
+<td style="text-align: center;">3912.5011</td>
+<td style="text-align: center;">3444.001</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"><span class="math inline">\(\tau^2\)</span></td>
+<td style="text-align: center;">2586.3832</td>
+<td style="text-align: center;">610.8421</td>
+<td style="text-align: center;">1840.5902</td>
+<td style="text-align: center;">3590.207</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(\phi\)</span></td>
+<td style="text-align: center;">293.4634</td>
+<td style="text-align: center;">461.0998</td>
+<td style="text-align: center;">305.5915</td>
+<td style="text-align: center;">2941.707</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="validation---full-gp" class="slide level2 smaller">
+<h2>Validation - Full GP</h2>
 <ul>
 <li>Testing set: 25% of the data</li>
+<li>Most of the points are close to reference line (<span class="math inline">\(slope=1\)</span> )</li>
+<li>Low confidence intervals among all the models</li>
+<li>Nearly no spatial dependence on the semivariogram</li>
+<li>Low residual values (close to 0.1)</li>
 </ul>
-<div style="text-align:center;">
-<p><img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png" style="zoom: 15%;"></p>
-</div>
-</section>
-<section id="results---residuals" class="slide level2">
-<h2>Results - Residuals</h2>
-<div style="text-align:center;">
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img src="./presentation.assets/PredictvsTest_Bayes-1714000870814-9.png"></p>
+</div><div class="column" style="width:50%;">
 <p><img data-src="./presentation.assets/Residual_Bayes-1714000947505-11.png"></p>
 </div>
+</div>
 </section>
-<section id="result---compare-with-linear-model" class="slide level2">
-<h2>Result - Compare with Linear Model</h2>
+<section id="validation---low-rank-gp" class="slide level2 smaller">
+<h2>Validation - Low Rank GP</h2>
+<ul>
+<li>More deviation points from reference line comparing to full rank GP model</li>
+<li>Higher confidence intervals than full GP model</li>
+<li>Less spatial dependence than LM model</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/PredictvsTest_LRBayes-1714048911319-50.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/Low%20Rank%20Residual_Bayes-1714048934393-52.png"></p>
+</div>
+</div>
+</section>
+<section id="validation---nngp" class="slide level2 smaller">
+<h2>Validation - NNGP</h2>
+<ul>
+<li>According to residuals, latent model is significantly better than response model, the latter one seems failing to capture spatial variance that still can notice in the semivariogram.</li>
+<li>In terms of the distribution of residuals, the two models tend to have similar spatial patterns that points with larger residuals are both gathered around the eastern part of the research region.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/NN_Residual_Bayes(Response)-1714052616731-72.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/NN_Residual_Bayes-1714052664959-74.png"></p>
+</div>
+</div>
+</section>
+<section id="validation---nngp-1" class="slide level2 smaller">
+<h2>Validation - NNGP</h2>
+<ul>
+<li>Comparing two models’ prediction on validation data, the scatters from latent model are closer to the reference line and has narrower confidence intervals generally.</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/PredictvsTest_NNBayes(Response)-1714052707321-76.png"></p>
+</div><div class="column" style="width:50%;">
+<p><img data-src="./presentation.assets/PredictvsTest_NNBayes-1714052735526-78.png"></p>
+</div>
+</div>
+</section>
+<section id="prediction" class="slide level2 smaller">
+<h2>Prediction</h2>
 <div style="text-align:center;">
-<p><img data-src="./presentation.assets/Compare_LM_Bayes.png"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="./presentation.assets/Prediction_Extra.png"></p>
+<figcaption>Prediction for Points with Missing Values within Michigan</figcaption>
+</figure>
+</div>
 </div>
 </section>
-<section id="low-rank-gp" class="slide level2 smaller">
-<h2>Low Rank GP</h2>
+<section id="further-attempts-non-stationary-model5" class="slide level2 smaller">
+<h2>Further Attempts: Non-stationary Model<sup>1</sup></h2>
+<p><strong>Model Description</strong></p>
 <ul>
-<li>Same priors, starting values, tuning values</li>
-<li>Same kernel (exponential)</li>
-<li>Knot size $ = $</li>
-<li>Computing time: <span class="math inline">\(\%\)</span> in reduction (from …)</li>
+<li><span class="math inline">\(Y = X + \epsilon\)</span> where <span class="math inline">\(\epsilon \sim N(0, \sigma^2)\)</span></li>
+<li><span class="math inline">\(X \sim MVN(\mu 1 + B\phi, diag[(p\exp[B\psi])^2])\)</span></li>
+<li><span class="math inline">\(\phi \sim MVN(0, \Sigma_{\phi}\)</span>)</li>
+<li><span class="math inline">\(\Sigma_{\phi} = (\tau_{\phi}^2[D_{\phi}-\alpha_{\phi}W_{\phi}]^{-1})\)</span></li>
 </ul>
+<p><strong>Priors</strong></p>
+<ul>
+<li><span class="math inline">\(\alpha_{\phi} \sim Beta(p_1,p_2)\)</span></li>
+<li><span class="math inline">\(\tau_{\phi}^2 \sim Gamma(q_1,q_2)\)</span></li>
+<li><span class="math inline">\(\rho \sim \text{Truncated Cauchy}(0, s)\)</span></li>
+</ul>
+<aside><ol class="aside-footnotes"><li id="fn5"><p>Ellefsen, K.J., and Van Gosen, B.S., 2020, Bayesian modeling of non-stationary, univariate, spatial data for the Earth sciences: U.S. Geological Survey Techniques and Methods, book 7, chap.&nbsp;C24, 20 p., https://doi.org/10.3133/tm7C24.</p></li></ol></aside></section>
+<section id="further-attempts-non-stationary-model" class="slide level2">
+<h2>Further Attempts: Non-stationary Model</h2>
+<p><strong>Fitting Results</strong></p>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p><img data-src="./presentation.assets/PredictvsTest_LRBayes.png"></p>
+<p><img data-src="./presentation.assets/non_sta_residual_statistics.png"></p>
+<div style="text-align:center; font-size:0.7em">
+<p>Charts of Residuals</p>
+</div>
 </div><div class="column" style="width:50%;">
-<p><img data-src="./presentation.assets/Low%20Rank%20Residual_Bayes.png"></p>
+<p><img data-src="./presentation.assets/non_sta_residual_sng.png"></p>
+<div style="text-align:center; font-size:0.7em">
+<p>Signs of Residuals on Each Location</p>
+</div>
 </div>
 </div>
 </section>
-<section id="nearest-neighbour-gp" class="slide level2 smaller">
-<h2>Nearest Neighbour GP</h2>
-<ul>
-<li>Same priors, starting values, tuning values</li>
-<li>Same kernel (exponential)</li>
-<li>Neighbour size:</li>
-<li>Computing time: <span class="math inline">\(\%\)</span> in reduction</li>
-<li>Almost as good as full rank GP</li>
-</ul>
+<section id="further-attempts-non-stationary-model-1" class="slide level2">
+<h2>Further Attempts: Non-stationary Model</h2>
+<p><strong>Prediction results</strong></p>
 <div class="columns">
 <div class="column" style="width:50%;">
-<p><img data-src="./presentation.assets/PredictvsTest_NNBayes(Response).png"></p>
+<p><img data-src="./presentation.assets/non_sta_pred_mean.png"></p>
+<div style="text-align:center; font-size:0.7em">
+<p>Non-Stationary Model Prediction: Mean</p>
+</div>
 </div><div class="column" style="width:50%;">
-<p><img data-src="./presentation.assets/NN_Residual_Bayes(Response)-1714010822869-26.png"></p>
+<p><img data-src="./presentation.assets/non_sta_pred_sd.png"></p>
+<div style="text-align:center; font-size:0.7em">
+<p>Non-Stationary Model Prediction: Standard Deviation</p>
 </div>
 </div>
+</div>
 </section>
-<section id="prediction---interpolating-the-damaged-values" class="slide level2">
-<h2>Prediction - Interpolating the damaged values</h2>
+<section id="discussion-and-improvements" class="slide level2 smaller">
+<h2>Discussion and Improvements</h2>
 <ul>
-<li>With full rank GP model</li>
-</ul>
-</section>
-<section id="prediction---light-pollution-in-ann-arbor" class="slide level2">
-<h2>Prediction - Light Pollution in Ann Arbor</h2>
-<ul>
-<li>With full rank GP model</li>
-</ul>
-</section>
-<section id="attempts-non-stationary-model" class="slide level2">
-<h2>Attempts: Non-stationary Model</h2>
-</section>
-<section id="discussion-on-improvements" class="slide level2">
-<h2>Discussion on Improvements</h2>
-<ul>
-<li>Scale too large</li>
-<li>Cloud cover issues</li>
-<li>static, not temporal</li>
+<li><p>Scale</p></li>
+<li><p>Cloud cover</p></li>
+<li><p>Static</p></li>
+<li><p>Response model vs Latent model</p>
+<p>Response model’s performance on our dataset is not as good as latent model, which is probably caused by the setting of the priors since response model’s nugget term is within the covariance, may consider adjust the prior of NNGP model more meticulously.</p></li>
 </ul>
 </section>
 <section id="thank-you" class="title-slide slide level1 center" style="text-align:center;">

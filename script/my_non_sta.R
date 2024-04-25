@@ -10,6 +10,7 @@ library(rstan)
 library(dplyr)
 library(tidyr)
 library(tibble)
+library(sf)
 
 # load our own dataset
 # work dir
@@ -63,7 +64,7 @@ ggplot() +
 
 
 me_sd = 1.37
-Value <- scaledLogit(my_dataset$conc, constSumValue = 1e6)
+Value <- my_dataset$conc
 spatialData <-
   sp::SpatialPointsDataFrame(data.frame(long = my_dataset$long,
                                         lat = my_dataset$lat,
@@ -80,16 +81,19 @@ spacings <- c("020", "025", "030", "035", "040",
               "045", "050", "055", "060",
               "070", "080", "090", "100")
 
-spacings = "100"
+spacings = "050"
 # The domain: two columns, the first is the longitude and the second is the latitude.
-my_domain = cbind(c(-125, -65, -65, -125), c(15, 15, 50, 50))
-colnames(my_domain) = c("long", "lat")
-# convert to spec_tbl_df
-my_domain = as.data.frame(my_domain)
+# my_domain = cbind(c(-125, -65, -65, -125), c(15, 15, 50, 50))
+# colnames(my_domain) = c("long", "lat")
+# # convert to spec_tbl_df
+# my_domain = as.data.frame(my_domain)
 
-my_roi = cbind(c(-125, -65, -65, -125), c(15, 15, 50, 50))
-colnames(my_roi) = c("long", "lat")
-my_roi = as.data.frame(my_roi)
+# set the domain to be the boundary of the continental US
+my_roi = ggplot2::map_data("usa") %>%
+  filter(region == "main") %>%
+  dplyr::select(long, lat) %>%
+  as.data.frame()
+my_domain = my_roi
 
 oBasisFunctions <- BasisFunctions(spacings,
                                   my_domain,
@@ -99,7 +103,7 @@ oBasisFunctions <- BasisFunctions(spacings,
 summary(oBasisFunctions)
 
 # plot locations of the basis function centers
-plot(oBasisFunctions, 100) +
+plot(oBasisFunctions, 050) +
   Add_Geography(boundary_color = "gray50") +
   # add a red rectangle to the map
   # geom_polygon(data = as.data.frame(my_domain), aes(x = long, y = lat), fill = "red") +
@@ -147,7 +151,7 @@ summary(oCrossValidation2)
 
 rm("filename", "tr", "nFolds", "nCpuCores")
 
-load("BasisFunctions\\Spacing_030.dat")
+load("BasisFunctions\\Spacing_050.dat")
 
 csrBasisFuncs <- as(basis_functions$basisFuncs, "RsparseMatrix")
 
@@ -170,3 +174,97 @@ stanData <- list( N = nrow(spatialData@data),
                   betaPar = c(2.5, 1.2),
                   gammaPar = c(2, 0.3),
                   cauchyPar = 3)
+# Function gen_int initializes some variables for the sampling
+gen_init <- function(){
+  phi1 <- rnorm(stanData$M, mean = 0.0, sd = 1e-6)
+  phi2 <- rnorm(stanData$M, mean = 0.0, sd = 1e-6)
+  return(list(phi1 = phi1, phi2 = phi2))
+}
+
+nChains <- 3
+if(nChains < parallel::detectCores()){
+  oldPar <- options(mc.cores = nChains)
+} else{
+  oldPar <- options(mc.cores = parallel::detectCores()-1)
+}
+
+rawSamples <- sampling(BMNUS_sm, data = stanData, chains = nChains,
+                       iter = 2000, warmup = 500,
+                       refresh = 100,
+                       seed = 7,
+                       init = gen_init,
+                       pars=c("phi1", "tau1", "alpha1",
+                              "phi2", "tau2", "alpha2", "rho",
+                              "Y_mean", "Y_sd"))
+options(oldPar)
+if(!dir.exists("SamplingResults")){
+  dir.create("SamplingResults")
+}
+save(stanData, rawSamples, file = "SamplingResults\\RawSamples.dat")
+
+rm("csrBasisFuncs", "carQuantities", "gen_init", "nChains", "oldPar", "BMNUS_sm")
+
+filename <- paste("SamplingResults\\Summary.txt", sep = "")
+oldPars <- options(width = 140, max.print = 100000)
+sink(filename)
+
+print(rawSamples, digits = 3,
+      pars = c("tau1", "alpha1", "tau2", "alpha2", "rho"))
+
+sink()
+options(width = oldPars$width, max.print = oldPars$max.print)
+
+rm("filename", "oldPars")
+
+
+# additional way to assess convergence
+library(shinystan)
+launch_shinystan(rawSamples)
+
+oCheckResiduals <- CheckResiduals(spatialData, rawSamples)
+plot(oCheckResiduals, spatialData, Example_CRS_arg_utm,
+     variogram_breaks = seq(from = 0, to = 150, length.out = 16))
+
+plotResidualMap(oCheckResiduals, spatialData, shape = 16, size = 0.9) +
+  Add_Geography(boundary_color = "gray50") +
+  Refine_Map("lambert", 25, 40, latLimits = c(25, 55)) +
+  Refine_Legend(c(0.02,0.99), c(0,1)) +
+  guides(colour = guide_legend(override.aes = list(size = 3))) +
+  theme(legend.key = element_rect(fill = "gray90"))
+
+# rm("end_points", "maxOffset")
+
+threshold <- scaledLogit(8000, constSumValue = 1e6)
+
+oPredictions <- Prediction(my_domain,
+                           spatialData,
+                           Example_CRS_arg_utm,
+                           basis_functions,
+                           rawSamples,
+                           threshold)
+
+# plot one-third of the points
+plotPredictionLocations(oPredictions, fraction = 1/4, fill = "black", shape = ".") +
+  Add_Geography(boundary_color = "gray50") +
+  Add_Path(my_roi, "red") +
+  Refine_Map("lambert", 25, 40, latLimits = c(25, 55))
+
+# Create a color palette for the maps
+plotPalette <- colorRampPalette(c("blue", "green",
+                                  "yellow", "orange", "red", "black"))(12)
+
+# plot of the map of the process mean
+plot(oPredictions, plotPalette, quantity = "Y_mean", isPaletteScaled = TRUE) +
+  # Add_Path(Example_roi, "black") +
+  Add_Geography(boundary_color = "gray50") +
+  Refine_Map("lambert", 25, 40, latLimits = c(25, 55)) +
+  Refine_Legend(c(0.02,0.99), c(0,1), legend.direction = "horizontal") +
+  theme(plot.title=element_text(hjust = 0, face = "bold.italic", size = 10))
+
+# plot of the map of the process standard deviation
+plot(oPredictions, plotPalette, quantity = "Y_sd", isPaletteScaled = FALSE) +
+  # Add_Path(Example_roi, "black") +
+  Add_Geography(boundary_color = "gray50") +
+  Refine_Map("lambert", 25, 40, latLimits = c(25, 55)) +
+  Refine_Legend(c(0.02,0.99), c(0,1), legend.direction = "horizontal") +
+  theme(plot.title=element_text(hjust = 0, face = "bold.italic", size = 10))

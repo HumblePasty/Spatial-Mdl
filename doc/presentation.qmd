@@ -17,7 +17,7 @@ editor: visual
 
 ::: {style="font-size:0.6em;"}
 
-Winter night in Kunming, Yunan, China, Jan 16, 2023
+Winter night in Kunming, Yunnan, China, Jan 16, 2023
 
 :::
 
@@ -79,7 +79,7 @@ Winter night in Kunming, Yunan, China, Jan 16, 2023
 **Explanatory Variables**
 
 -   **Population Density[^1]**
--   **Land Price[^2]**
+-   **Land Price[^2]** (not used)
 -   **Electricity Consumption[^3]**
 
 All are raster datasets and are sampled at the same locations as `MPSAS` measurements.
@@ -114,13 +114,12 @@ $$
 
 **Explanatory Variables**
 $$
-x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
+x(s) = [x_1(s), x_2(s), x_3(s)]^T
 $$
 
 - $x_1$: Elevation
 - $x_2$: Population Density
-- $x_3$: Land Price
-- $x_4$: Electricity Consumption
+- $x_3$: Electricity Consumption
 
 :::
 
@@ -198,7 +197,7 @@ The residual plot of semivariance from nonspatial model could help with our deci
 
 ## Model Assumptions - Priors {.smaller}
 
--   $\sigma^2 \sim Inv.G(2, 2)$
+-   $\sigma^2 \sim Inv.G(2, 0.5)$
     -   Chose because the sill value of residuals plot is close to 0.5
     -   Starting value: same as 0.5
 
@@ -277,6 +276,14 @@ The residual plot of semivariance from nonspatial model could help with our deci
 
 ::::
 
+## MCMC Trace - Full GP {.smaller}
+
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/cb1fe106bfb86266f61edc1e9b3020c.jpg" style="zoom: 50%;" />
+
+:::
+
 ## MCMC Trace - Low Rank GP {.smaller}
 
 -   MCMC samples: 50, 000
@@ -343,6 +350,14 @@ The residual plot of semivariance from nonspatial model could help with our deci
 :::
 
 ::::
+
+## MCMC Trace - Low Rank GP {.smaller}
+
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/f1fe732cb74bb5727198a5d1cb21328.jpg" style="zoom:50%;" />
+
+:::
 
 ## MCMC Trace - Nearest Neighbour GP {.smaller}
 
@@ -445,6 +460,14 @@ The residual plot of semivariance from nonspatial model could help with our deci
 :::
 
 ::::
+
+## MCMC Trace - Nearest Neighbour GP {.smaller}
+
+::: {style="text-align:center;"}
+
+<img src="./presentation.assets/18471d9e8e34849b131ec8d173ad51c.jpg" style="zoom:50%;" />
+
+:::
 
 ## MCMC Diagnoses - Full GP {.smaller}
 

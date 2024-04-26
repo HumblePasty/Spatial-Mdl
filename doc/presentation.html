@@ -342,7 +342,7 @@ Map Mad Scientists<br>Kunxi Li, Haolin Li, Jiayuan Xiao
 <p><strong>Light Pollution</strong></p>
 <p><img src="./presentation.assets/35732ace7b56363ff57b7f79f401ecb.jpg" alt="I took this in Kunming, Yunnan, " style="zoom: 33%;"></p>
 <div style="font-size:0.6em;">
-<p>Winter night in Kunming, Yunan, China, Jan 16, 2023</p>
+<p>Winter night in Kunming, Yunnan, China, Jan 16, 2023</p>
 </div>
 </div>
 </section>
@@ -398,7 +398,7 @@ NELM = \text{some complex function}(MPSAS)
 <p><strong>Explanatory Variables</strong></p>
 <ul>
 <li><strong>Population Density<sup>1</sup></strong></li>
-<li><strong>Land Price<sup>2</sup></strong></li>
+<li><strong>Land Price<sup>2</sup></strong> (not used)</li>
 <li><strong>Electricity Consumption<sup>3</sup></strong></li>
 </ul>
 <p>All are raster datasets and are sampled at the same locations as <code>MPSAS</code> measurements.</p>
@@ -426,13 +426,12 @@ y(s)
 <li><code>MPSAS</code> measurement at location <span class="math inline">\(s\)</span> (Univariate)</li>
 </ul>
 <p><strong>Explanatory Variables</strong> <span class="math display">\[
-x(s) = [x_1(s), x_2(s), x_3(s), x_4(s)]^T
+x(s) = [x_1(s), x_2(s), x_3(s)]^T
 \]</span></p>
 <ul>
 <li><span class="math inline">\(x_1\)</span>: Elevation</li>
 <li><span class="math inline">\(x_2\)</span>: Population Density</li>
-<li><span class="math inline">\(x_3\)</span>: Land Price</li>
-<li><span class="math inline">\(x_4\)</span>: Electricity Consumption</li>
+<li><span class="math inline">\(x_3\)</span>: Electricity Consumption</li>
 </ul>
 </div>
 </section>
@@ -504,7 +503,7 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 <section id="model-assumptions---priors-2" class="slide level2 smaller">
 <h2>Model Assumptions - Priors</h2>
 <ul>
-<li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 2)\)</span>
+<li><span class="math inline">\(\sigma^2 \sim Inv.G(2, 0.5)\)</span>
 <ul>
 <li>Chose because the sill value of residuals plot is close to 0.5</li>
 <li>Starting value: same as 0.5</li>
@@ -622,6 +621,12 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 </div>
 </div>
 </section>
+<section id="mcmc-trace---full-gp-2" class="slide level2 smaller">
+<h2>MCMC Trace - Full GP</h2>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/cb1fe106bfb86266f61edc1e9b3020c.jpg" style="zoom: 50%;"></p>
+</div>
+</section>
 <section id="mcmc-trace---low-rank-gp" class="slide level2 smaller">
 <h2>MCMC Trace - Low Rank GP</h2>
 <ul>
@@ -726,6 +731,12 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 </div><div class="column" style="width:50%;">
 <p><img data-src="./presentation.assets/LRGP_trace-1714053137368-82.png"></p>
 </div>
+</div>
+</section>
+<section id="mcmc-trace---low-rank-gp-2" class="slide level2 smaller">
+<h2>MCMC Trace - Low Rank GP</h2>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/f1fe732cb74bb5727198a5d1cb21328.jpg" style="zoom:50%;"></p>
 </div>
 </section>
 <section id="mcmc-trace---nearest-neighbour-gp" class="slide level2 smaller">
@@ -869,6 +880,12 @@ C(s, s') = \sigma^2 \exp{-\phi||s - s'||}
 </div>
 </div>
 </div>
+</div>
+</section>
+<section id="mcmc-trace---nearest-neighbour-gp-3" class="slide level2 smaller">
+<h2>MCMC Trace - Nearest Neighbour GP</h2>
+<div style="text-align:center;">
+<p><img src="./presentation.assets/18471d9e8e34849b131ec8d173ad51c.jpg" style="zoom:50%;"></p>
 </div>
 </section>
 <section id="mcmc-diagnoses---full-gp" class="slide level2 smaller">
